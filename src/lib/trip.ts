@@ -58,3 +58,34 @@ export function whatsappLink(phone: string, message: string): string | null {
   if (!digits) return null;
   return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
 }
+
+export interface EncomendaInput {
+  origem: string;
+  destino: string;
+  data: string; // YYYY-MM-DD
+  descricao?: string;
+}
+
+export function validateEncomenda(e: EncomendaInput): string[] {
+  const errors: string[] = [];
+  if (!e.origem?.trim()) errors.push("Selecione a origem.");
+  if (!e.destino?.trim()) errors.push("Selecione o destino.");
+  if (e.origem?.trim() && e.destino?.trim() &&
+      e.origem.trim().toLowerCase() === e.destino.trim().toLowerCase())
+    errors.push("Origem e destino não podem ser iguais.");
+  if (!e.data) errors.push("Escolha a data de envio.");
+  return errors;
+}
+
+export function buildEncomendaMessage(e: EncomendaInput): string {
+  const lines = [
+    "Olá! Gostaria de fazer um orçamento de encomenda pela Viação Total.",
+    "",
+    `Origem: ${e.origem}`,
+    `Destino: ${e.destino}`,
+    `Data de envio: ${formatBRDate(e.data)}`,
+  ];
+  if (e.descricao?.trim()) lines.push(`Conteúdo: ${e.descricao.trim()}`);
+  lines.push("", "Poderiam confirmar a disponibilidade, o valor atualizado e as condições do envio?");
+  return lines.join("\n");
+}

@@ -1,10 +1,10 @@
-﻿{
+{
     "settings":  {
                      "salesWhatsapp":  "",
                      "sac":  "0800 085 8080",
                      "email":  "sac@viajetotal.com.br",
-                     "atendimento":  "SAC 24h | Comercial 08h Ã s 18h, segunda a sexta",
-                     "endereco":  "Rua Santa Clara, NÂº 1007, Sala 01, MÃ¡rio Andreazza, Bayeux - PB, CEP 58.309-614"
+                     "atendimento":  "SAC 24h | Comercial 08h às 18h, segunda a sexta",
+                     "endereco":  "Rua Santa Clara, Nº 1007, Sala 01, Mário Andreazza, Bayeux - PB, CEP 58.309-614"
                  },
     "destinations":  [
                          {
@@ -16,14 +16,14 @@
                          },
                          {
                              "id":  "d2",
-                             "cidade":  "SÃ£o JosÃ© do Rio Preto",
+                             "cidade":  "São José do Rio Preto",
                              "uf":  "SP",
                              "ativo":  true,
                              "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
                          },
                          {
                              "id":  "d3",
-                             "cidade":  "CuiabÃ¡",
+                             "cidade":  "Cuiabá",
                              "uf":  "MT",
                              "ativo":  true,
                              "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
@@ -37,21 +37,21 @@
                          },
                          {
                              "id":  "d5",
-                             "cidade":  "BrasÃ­lia",
+                             "cidade":  "Brasília",
                              "uf":  "DF",
                              "ativo":  true,
                              "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
                          },
                          {
                              "id":  "d6",
-                             "cidade":  "GoiÃ¢nia",
+                             "cidade":  "Goiânia",
                              "uf":  "GO",
                              "ativo":  true,
                              "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
                          },
                          {
                              "id":  "d7",
-                             "cidade":  "SÃ£o Paulo",
+                             "cidade":  "São Paulo",
                              "uf":  "SP",
                              "ativo":  true,
                              "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
@@ -72,7 +72,7 @@
                          },
                          {
                              "id":  "d10",
-                             "cidade":  "JoÃ£o Pessoa",
+                             "cidade":  "João Pessoa",
                              "uf":  "PB",
                              "ativo":  true,
                              "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
@@ -82,7 +82,7 @@
                      {
                          "id":  "f1",
                          "origem":  "Belo Horizonte",
-                         "destino":  "SÃ£o JosÃ© do Rio Preto",
+                         "destino":  "São José do Rio Preto",
                          "preco":  "R$ 305,77",
                          "ativo":  true,
                          "posicao":  1,
@@ -91,7 +91,7 @@
                      },
                      {
                          "id":  "f2",
-                         "origem":  "CuiabÃ¡",
+                         "origem":  "Cuiabá",
                          "destino":  "Campo Grande",
                          "preco":  "R$ 173,90",
                          "ativo":  true,
@@ -101,7 +101,7 @@
                      },
                      {
                          "id":  "f3",
-                         "origem":  "BrasÃ­lia",
+                         "origem":  "Brasília",
                          "destino":  "Belo Horizonte",
                          "preco":  "R$ 199,00",
                          "ativo":  true,
@@ -112,7 +112,7 @@
                      {
                          "id":  "f4",
                          "origem":  "Campo Grande",
-                         "destino":  "BrasÃ­lia",
+                         "destino":  "Brasília",
                          "preco":  "R$ 399,00",
                          "ativo":  true,
                          "posicao":  4,
@@ -122,7 +122,7 @@
                      {
                          "id":  "f5",
                          "origem":  "Campo Grande",
-                         "destino":  "GoiÃ¢nia",
+                         "destino":  "Goiânia",
                          "preco":  "R$ 380,00",
                          "ativo":  true,
                          "posicao":  5,
@@ -132,7 +132,7 @@
                      {
                          "id":  "f6",
                          "origem":  "Campo Grande",
-                         "destino":  "SÃ£o JosÃ© do Rio Preto",
+                         "destino":  "São José do Rio Preto",
                          "preco":  "R$ 351,44",
                          "ativo":  true,
                          "posicao":  6,
@@ -142,7 +142,7 @@
                      {
                          "id":  "f7",
                          "origem":  "Campo Grande",
-                         "destino":  "SÃ£o Paulo",
+                         "destino":  "São Paulo",
                          "preco":  "R$ 328,41",
                          "ativo":  true,
                          "posicao":  7,
@@ -162,7 +162,7 @@
                      {
                          "id":  "f9",
                          "origem":  "Recife",
-                         "destino":  "JoÃ£o Pessoa",
+                         "destino":  "João Pessoa",
                          "preco":  "R$ 27,00",
                          "ativo":  true,
                          "posicao":  9,

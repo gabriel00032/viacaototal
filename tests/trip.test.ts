@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { validateSearch, buildWhatsMessage, whatsappLink } from "../src/lib/trip";
+import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "../src/lib/trip";
 
 describe("pesquisa de viagens", () => {
   it("aceita origem/destino/data válidos", () => {
@@ -21,5 +21,11 @@ describe("pesquisa de viagens", () => {
   });
   it("retorna null sem número comercial configurado", () => {
     expect(whatsappLink("", "oi")).toBeNull();
+  });
+  it("valida e monta mensagem de encomenda", () => {
+    expect(validateEncomenda({ origem: "Cuiabá", destino: "Cuiabá", data: "2026-12-01" }).join()).toMatch(/iguais/);
+    const msg = buildEncomendaMessage({ origem: "Recife", destino: "João Pessoa", data: "2026-12-01", descricao: "Caixa 5kg" });
+    expect(msg).toMatch(/orçamento de encomenda/);
+    expect(msg).toMatch(/Caixa 5kg/);
   });
 });

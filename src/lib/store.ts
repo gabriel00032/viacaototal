@@ -26,7 +26,7 @@ export interface DB {
 const file = path.join(process.cwd(), "data", "db.json");
 
 export function loadDB(): DB {
-  const raw = fs.readFileSync(file, "utf-8");
+  const raw = fs.readFileSync(file, "utf-8").replace(/^\uFEFF/, "");
   return JSON.parse(raw) as DB;
 }
 

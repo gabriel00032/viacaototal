@@ -2,7 +2,11 @@
 
 Canal de consulta de viagens com finalização pelo WhatsApp. Sem pagamento online.
 
-## Auditoria da referência (13/10/2026, viajetotal.com.br)
+## Referências
+- Conteúdo/dados: https://www.viajetotal.com.br/ (auditoria 13/10/2026 — seção "Passagens mais buscadas", diferenciais, rodapé).
+- Padrão visual e estrutura (modelo televendas): https://logtrans.app/ — cabeçalho com agência + WhatsApp, hero em gradiente com busca por abas Passagem/Encomenda, lista "Principais linhas" em botões por rota. Cores navy/azul/laranja/verde e fontes Sora + Manrope inspiradas na referência. Nenhum dado operacional da Logtrans foi copiado: rotas, preços e contatos são os da Viação Total.
+
+## Auditoria viajetotal.com.br (13/10/2026)
 - Diferenciais mini: Custo Benefício, Embarque Digital, 100% Seguro, Remarcação Fácil, Ônibus Sanitizado.
 - Seção "Diferenciais Viação Total" + cards "Conforto e Segurança" e "Qualidade nos serviços e bons profissionais".
 - "Passagens mais buscadas" (ordem preservada em `data/db.json`):
