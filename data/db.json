@@ -1,179 +1,175 @@
 {
-    "settings":  {
-                     "salesWhatsapp":  "",
-                     "sac":  "0800 085 8080",
-                     "email":  "sac@viajetotal.com.br",
-                     "atendimento":  "SAC 24h | Comercial 08h às 18h, segunda a sexta",
-                     "endereco":  "Rua Santa Clara, Nº 1007, Sala 01, Mário Andreazza, Bayeux - PB, CEP 58.309-614"
-                 },
-    "destinations":  [
-                         {
-                             "id":  "d1",
-                             "cidade":  "Belo Horizonte",
-                             "uf":  "MG",
-                             "ativo":  true,
-                             "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
-                         },
-                         {
-                             "id":  "d2",
-                             "cidade":  "São José do Rio Preto",
-                             "uf":  "SP",
-                             "ativo":  true,
-                             "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
-                         },
-                         {
-                             "id":  "d3",
-                             "cidade":  "Cuiabá",
-                             "uf":  "MT",
-                             "ativo":  true,
-                             "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
-                         },
-                         {
-                             "id":  "d4",
-                             "cidade":  "Campo Grande",
-                             "uf":  "MS",
-                             "ativo":  true,
-                             "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
-                         },
-                         {
-                             "id":  "d5",
-                             "cidade":  "Brasília",
-                             "uf":  "DF",
-                             "ativo":  true,
-                             "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
-                         },
-                         {
-                             "id":  "d6",
-                             "cidade":  "Goiânia",
-                             "uf":  "GO",
-                             "ativo":  true,
-                             "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
-                         },
-                         {
-                             "id":  "d7",
-                             "cidade":  "São Paulo",
-                             "uf":  "SP",
-                             "ativo":  true,
-                             "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
-                         },
-                         {
-                             "id":  "d8",
-                             "cidade":  "Londrina",
-                             "uf":  "PR",
-                             "ativo":  true,
-                             "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
-                         },
-                         {
-                             "id":  "d9",
-                             "cidade":  "Recife",
-                             "uf":  "PE",
-                             "ativo":  true,
-                             "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
-                         },
-                         {
-                             "id":  "d10",
-                             "cidade":  "João Pessoa",
-                             "uf":  "PB",
-                             "ativo":  true,
-                             "fonte":  "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
-                         }
-                     ],
-    "featured":  [
-                     {
-                         "id":  "f1",
-                         "origem":  "Belo Horizonte",
-                         "destino":  "São José do Rio Preto",
-                         "preco":  "R$ 305,77",
-                         "ativo":  true,
-                         "posicao":  1,
-                         "fonte":  "viajetotal.com.br",
-                         "validadoEm":  "2026-10-13"
-                     },
-                     {
-                         "id":  "f2",
-                         "origem":  "Cuiabá",
-                         "destino":  "Campo Grande",
-                         "preco":  "R$ 173,90",
-                         "ativo":  true,
-                         "posicao":  2,
-                         "fonte":  "viajetotal.com.br",
-                         "validadoEm":  "2026-10-13"
-                     },
-                     {
-                         "id":  "f3",
-                         "origem":  "Brasília",
-                         "destino":  "Belo Horizonte",
-                         "preco":  "R$ 199,00",
-                         "ativo":  true,
-                         "posicao":  3,
-                         "fonte":  "viajetotal.com.br",
-                         "validadoEm":  "2026-10-13"
-                     },
-                     {
-                         "id":  "f4",
-                         "origem":  "Campo Grande",
-                         "destino":  "Brasília",
-                         "preco":  "R$ 399,00",
-                         "ativo":  true,
-                         "posicao":  4,
-                         "fonte":  "viajetotal.com.br",
-                         "validadoEm":  "2026-10-13"
-                     },
-                     {
-                         "id":  "f5",
-                         "origem":  "Campo Grande",
-                         "destino":  "Goiânia",
-                         "preco":  "R$ 380,00",
-                         "ativo":  true,
-                         "posicao":  5,
-                         "fonte":  "viajetotal.com.br",
-                         "validadoEm":  "2026-10-13"
-                     },
-                     {
-                         "id":  "f6",
-                         "origem":  "Campo Grande",
-                         "destino":  "São José do Rio Preto",
-                         "preco":  "R$ 351,44",
-                         "ativo":  true,
-                         "posicao":  6,
-                         "fonte":  "viajetotal.com.br",
-                         "validadoEm":  "2026-10-13"
-                     },
-                     {
-                         "id":  "f7",
-                         "origem":  "Campo Grande",
-                         "destino":  "São Paulo",
-                         "preco":  "R$ 328,41",
-                         "ativo":  true,
-                         "posicao":  7,
-                         "fonte":  "viajetotal.com.br",
-                         "validadoEm":  "2026-10-13"
-                     },
-                     {
-                         "id":  "f8",
-                         "origem":  "Campo Grande",
-                         "destino":  "Londrina",
-                         "preco":  "R$ 329,60",
-                         "ativo":  true,
-                         "posicao":  8,
-                         "fonte":  "viajetotal.com.br",
-                         "validadoEm":  "2026-10-13"
-                     },
-                     {
-                         "id":  "f9",
-                         "origem":  "Recife",
-                         "destino":  "João Pessoa",
-                         "preco":  "R$ 27,00",
-                         "ativo":  true,
-                         "posicao":  9,
-                         "fonte":  "viajetotal.com.br",
-                         "validadoEm":  "2026-10-13"
-                     }
-                 ],
-    "schedules":  [
-
-                  ],
-    "clicks":  [
-
-               ]
+  "settings": {
+    "salesWhatsapp": "5511992414101",
+    "sac": "0800 085 8080",
+    "email": "sac@viajetotal.com.br",
+    "atendimento": "SAC 24h | Comercial 08h às 18h, segunda a sexta",
+    "endereco": "Rua Santa Clara, Nº 1007, Sala 01, Mário Andreazza, Bayeux - PB, CEP 58.309-614"
+  },
+  "destinations": [
+    {
+      "id": "d1",
+      "cidade": "Belo Horizonte",
+      "uf": "MG",
+      "ativo": true,
+      "fonte": "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
+    },
+    {
+      "id": "d2",
+      "cidade": "São José do Rio Preto",
+      "uf": "SP",
+      "ativo": true,
+      "fonte": "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
+    },
+    {
+      "id": "d3",
+      "cidade": "Cuiabá",
+      "uf": "MT",
+      "ativo": true,
+      "fonte": "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
+    },
+    {
+      "id": "d4",
+      "cidade": "Campo Grande",
+      "uf": "MS",
+      "ativo": true,
+      "fonte": "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
+    },
+    {
+      "id": "d5",
+      "cidade": "Brasília",
+      "uf": "DF",
+      "ativo": true,
+      "fonte": "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
+    },
+    {
+      "id": "d6",
+      "cidade": "Goiânia",
+      "uf": "GO",
+      "ativo": true,
+      "fonte": "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
+    },
+    {
+      "id": "d7",
+      "cidade": "São Paulo",
+      "uf": "SP",
+      "ativo": true,
+      "fonte": "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
+    },
+    {
+      "id": "d8",
+      "cidade": "Londrina",
+      "uf": "PR",
+      "ativo": true,
+      "fonte": "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
+    },
+    {
+      "id": "d9",
+      "cidade": "Recife",
+      "uf": "PE",
+      "ativo": true,
+      "fonte": "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
+    },
+    {
+      "id": "d10",
+      "cidade": "João Pessoa",
+      "uf": "PB",
+      "ativo": true,
+      "fonte": "https://www.viajetotal.com.br/ (auditoria 13/10/2026)"
+    }
+  ],
+  "featured": [
+    {
+      "id": "f1",
+      "origem": "Belo Horizonte",
+      "destino": "São José do Rio Preto",
+      "preco": "R$ 305,77",
+      "ativo": true,
+      "posicao": 1,
+      "fonte": "viajetotal.com.br",
+      "validadoEm": "2026-10-13"
+    },
+    {
+      "id": "f2",
+      "origem": "Cuiabá",
+      "destino": "Campo Grande",
+      "preco": "R$ 173,90",
+      "ativo": true,
+      "posicao": 2,
+      "fonte": "viajetotal.com.br",
+      "validadoEm": "2026-10-13"
+    },
+    {
+      "id": "f3",
+      "origem": "Brasília",
+      "destino": "Belo Horizonte",
+      "preco": "R$ 199,00",
+      "ativo": true,
+      "posicao": 3,
+      "fonte": "viajetotal.com.br",
+      "validadoEm": "2026-10-13"
+    },
+    {
+      "id": "f4",
+      "origem": "Campo Grande",
+      "destino": "Brasília",
+      "preco": "R$ 399,00",
+      "ativo": true,
+      "posicao": 4,
+      "fonte": "viajetotal.com.br",
+      "validadoEm": "2026-10-13"
+    },
+    {
+      "id": "f5",
+      "origem": "Campo Grande",
+      "destino": "Goiânia",
+      "preco": "R$ 380,00",
+      "ativo": true,
+      "posicao": 5,
+      "fonte": "viajetotal.com.br",
+      "validadoEm": "2026-10-13"
+    },
+    {
+      "id": "f6",
+      "origem": "Campo Grande",
+      "destino": "São José do Rio Preto",
+      "preco": "R$ 351,44",
+      "ativo": true,
+      "posicao": 6,
+      "fonte": "viajetotal.com.br",
+      "validadoEm": "2026-10-13"
+    },
+    {
+      "id": "f7",
+      "origem": "Campo Grande",
+      "destino": "São Paulo",
+      "preco": "R$ 328,41",
+      "ativo": true,
+      "posicao": 7,
+      "fonte": "viajetotal.com.br",
+      "validadoEm": "2026-10-13"
+    },
+    {
+      "id": "f8",
+      "origem": "Campo Grande",
+      "destino": "Londrina",
+      "preco": "R$ 329,60",
+      "ativo": true,
+      "posicao": 8,
+      "fonte": "viajetotal.com.br",
+      "validadoEm": "2026-10-13"
+    },
+    {
+      "id": "f9",
+      "origem": "Recife",
+      "destino": "João Pessoa",
+      "preco": "R$ 27,00",
+      "ativo": true,
+      "posicao": 9,
+      "fonte": "viajetotal.com.br",
+      "validadoEm": "2026-10-13"
+    }
+  ],
+  "schedules": [],
+  "clicks": []
 }

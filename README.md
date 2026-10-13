@@ -23,7 +23,10 @@ Canal de consulta de viagens com finalização pelo WhatsApp. Sem pagamento onli
 - Site oficial é SPA Angular (conteúdo dinâmico via API); preços acima são "a partir de", sujeitos a confirmação comercial.
 
 ## Pendente de validação
-- Número do WhatsApp comercial (configurar em /admin/configuracoes ou SALES_WHATSAPP).
+- ~~Número do WhatsApp comercial (configurar em /admin/configuracoes ou SALES_WHATSAPP).~~
+  Padrão oficial aplicado: `5511992414101` (extraído de `/config/vtr.json` do site
+  oficial — ver `docs/extracao-viajetotal.md`). A agência deve confirmar se mantém
+  este número ou troca pelo comercial próprio em `/admin/configuracoes`.
 - Horários/partidas (nenhum confirmado ainda — página /horarios exibe estado vazio correto).
 - Se o endereço da matriz é guichê; fotos oficiais dos cartões; textos de Missão/frota.
 
