@@ -1,0 +1,14 @@
+// Modelo oficial para PostgreSQL em produção (Prisma).
+// Dev local usa data/db.json (mesmos campos). Para migrar:
+// 1) provider = "postgresql", 2) npx prisma migrate dev.
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "sqlite"; url = "file:./dev.db" }
+
+model AdminUser { id String @id @default(cuid()); name String; email String @unique; passwordHash String; role String @default("admin"); active Boolean @default(true); createdAt DateTime @default(now()); updatedAt DateTime @updatedAt }
+model Destination { id String @id @default(cuid()); city String; state String; active Boolean @default(true); sourceUrl String?; lastVerifiedAt DateTime?; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt }
+model Route { id String @id @default(cuid()); originId String; destinationId String; active Boolean @default(true); sourceUrl String?; lastVerifiedAt DateTime?; notes String?; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt }
+model Schedule { id String @id @default(cuid()); routeId String; departureTime String; operatingDays String; validityStart DateTime?; validityEnd DateTime?; status String @default("pendente"); sourceUrl String?; lastVerifiedAt DateTime?; notes String? }
+model FeaturedTrip { id String @id @default(cuid()); routeId String?; title String; imagePath String?; displayedPrice String?; priceValidUntil DateTime?; position Int @default(0); active Boolean @default(true); sourceUrl String?; lastVerifiedAt DateTime?; createdAt DateTime @default(now()); updatedAt DateTime @updatedAt }
+model InstitutionalContent { id String @id @default(cuid()); section String @unique; title String; body String; imagePath String?; active Boolean @default(true); updatedAt DateTime @updatedAt }
+model BusinessSettings { id String @id @default(cuid()); companyName String @default("Viação Total"); salesWhatsapp String @default(""); sacPhone String @default("0800 085 8080"); contactEmail String @default("sac@viajetotal.com.br"); businessHours String @default("08h às 18h, segunda a sexta"); address String @default("Rua Santa Clara, Nº 1007, Sala 01, Mário Andreazza, Bayeux - PB, CEP 58.309-614"); updatedAt DateTime @updatedAt }
+model AuditLog { id String @id @default(cuid()); adminUserId String; action String; entityType String; entityId String?; createdAt DateTime @default(now()) }
