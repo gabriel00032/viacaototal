@@ -1,0 +1,79 @@
+// Integração de horários em tempo real (API pública do site oficial).
+// Somente leitura. Nenhum dado é inventado: o que aparece veio da API.
+
+export interface TripOption {
+  partida: string;   // "07:00"
+  chegada: string;   // "19:15"
+  duracao: string;   // "12h15"
+  classe: string;    // "CONVENCIONAL"
+  assentos: number;
+  preco: number | null;
+  precoOriginal: number | null;
+  origem: string;
+  destino: string;
+}
+
+// Candidatos oficiais (nomes exatos da API) por cidade simplificada.
+const CANDIDATOS: Record<string, string[]> = {
+  "BELO HORIZONTE - MG": ["BELO HORIZONTE - MG ( TERMINAL RODOVIARIO )"],
+  "SAO JOSE DO RIO PRETO - SP": ["SAO JOSE DO RIO PRETO - SP ( TERMINAL RODOVIARIO )"],
+  "CUIABA - MT": ["CUIABA - MT ( TERMINAL RODOVIARIO )", "CUIABA (COXIPO) - MT"],
+  "CAMPO GRANDE - MS": ["CAMPO GRANDE - MS ( TERMINAL RODOVIARIO )", "CAMPO GRANDE - MS (SAGITARIUS)"],
+  "BRASILIA - DF": ["BRASILIA - DF ( TERMINAL RODOVIARIO )"],
+  "GOIANIA - GO": ["GOIANIA - GO ( TERMINAL RODOVIARIO )", "GOIANIA - GO (TERMINAL CAMPINAS)"],
+  "SAO PAULO - SP": ["SAO PAULO-SP (TERMINAL RODOVIARIO BARRA FUNDA)"],
+  "LONDRINA - PR": ["LONDRINA - PR ( TERMINAL RODOVIARIO )"],
+  "RECIFE - PE": ["RECIFE - PE", "RECIFE (CAXANGA) - PE"],
+  "JOAO PESSOA - PB": ["JOAO PESSOA - PB", "JOAO PESSOA (GAUCHINHA) - PB"],
+};
+
+export function norm(s: string): string {
+  return (s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+}
+
+export function candidatosOficiais(cidadeSimplificada: string): string[] {
+  const key = norm(cidadeSimplificada);
+  return CANDIDATOS[key] || [];
+}
+
+function fmtHora(iso: string): string {
+  const d = new Date(iso);
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+
+export function shapeTrips(raw: any, dataISO: string): TripOption[] {
+  const list: TripOption[] = [];
+  for (const t of raw?.trips || []) {
+    if (!t?.departureDateTime) continue;
+    const out: TripOption = {
+      partida: fmtHora(t.departureDateTime),
+      chegada: t.arrivalDateTime ? fmtHora(t.arrivalDateTime) : "--:--",
+      duracao: t.duration
+        ? `${t.duration.hours}h${String(t.duration.minutes).padStart(2, "0")}`.replace("h00", "h")
+        : "--",
+      classe: t.classOfServiceName || "Convencional",
+      assentos: Number(t.availableSeats ?? 0),
+      preco: typeof t.price === "number" ? t.price : null,
+      precoOriginal: typeof t.originalPrice === "number" ? t.originalPrice : null,
+      origem: t.departureLocationName || "",
+      destino: t.arrivalLocationName || "",
+    };
+    list.push(out);
+  }
+  // Remove partidas já passadas (somente para a data de hoje)
+  const hoje = new Date().toISOString().slice(0, 10);
+  const agora = new Date();
+  const filtrados = dataISO === hoje
+    ? list.filter(o => {
+        const [h, m] = o.partida.split(":").map(Number);
+        const d = new Date(); d.setHours(h, m, 0, 0);
+        return d.getTime() > agora.getTime();
+      })
+    : list;
+  return filtrados.sort((a, b) => a.partida.localeCompare(b.partida));
+}
+
+export function brl(v: number | null): string {
+  if (v === null) return "a confirmar";
+  return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}

@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "../src/lib/trip";
+import { candidatosOficiais, shapeTrips, brl } from "../src/lib/schedules";
 
 describe("pesquisa de viagens", () => {
   it("aceita origem/destino/data válidos", () => {
@@ -27,5 +28,25 @@ describe("pesquisa de viagens", () => {
     const msg = buildEncomendaMessage({ origem: "Recife", destino: "João Pessoa", data: "2026-12-01", descricao: "Caixa 5kg" });
     expect(msg).toMatch(/orçamento de encomenda/);
     expect(msg).toMatch(/Caixa 5kg/);
+  });
+  it("mapeia cidades para nomes oficiais sem inventar", () => {
+    expect(candidatosOficiais("Cuiabá - MT")).toContain("CUIABA - MT ( TERMINAL RODOVIARIO )");
+    expect(candidatosOficiais("Cidade Inexistente - XX")).toEqual([]);
+  });
+  it("formata viagens reais da API e ordena por partida", () => {
+    const raw = { trips: [
+      { departureDateTime: "2026-12-01T19:15:00", arrivalDateTime: "2026-12-02T07:30:00", duration: { hours: 12, minutes: 15 }, classOfServiceName: "CONVENCIONAL", availableSeats: 5, price: 173.9, originalPrice: 332.98, departureLocationName: "A", arrivalLocationName: "B" },
+      { departureDateTime: "2026-12-01T07:00:00", arrivalDateTime: "2026-12-01T19:15:00", duration: { hours: 12, minutes: 15 }, classOfServiceName: "EXECUTIVO", availableSeats: 10, price: null, originalPrice: null, departureLocationName: "A", arrivalLocationName: "B" },
+    ]};
+    const trips = shapeTrips(raw, "2026-12-01");
+    expect(trips[0].partida).toBe("07:00");
+    expect(trips[1].preco).toBe(173.9);
+    expect(brl(173.9)).toMatch(/173,90/);
+    expect(brl(null)).toBe("a confirmar");
+  });
+  it("inclui horário e detalhes na mensagem do WhatsApp", () => {
+    const msg = buildWhatsMessage({ origem: "A", destino: "B", dataIda: "2026-12-01", horario: "07:00", passageiros: 2, tipo: "ida", detalhes: ["Horário: 07:00 (chegada prevista 19:15)"] });
+    expect(msg).toMatch(/Horário desejado: 07:00/);
+    expect(msg).toMatch(/chegada prevista/);
   });
 });

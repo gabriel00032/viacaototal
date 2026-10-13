@@ -171,5 +171,14 @@
     }
   ],
   "schedules": [],
-  "clicks": []
+  "clicks": [
+    {
+      "rota": "Cuiabá - MT → Campo Grande - MS",
+      "total": 1
+    },
+    {
+      "rota": "Cuiabá → Campo Grande",
+      "total": 1
+    }
+  ]
 }

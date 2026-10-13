@@ -7,6 +7,7 @@ export interface SearchInput {
   passageiros?: number;
   tipo?: "ida" | "ida_volta";
   dataVolta?: string;
+  detalhes?: string[];
 }
 
 export function validateSearch(s: SearchInput): string[] {
@@ -49,6 +50,7 @@ export function buildWhatsMessage(s: SearchInput): string {
   if (s.passageiros) lines.push(`Passageiros: ${s.passageiros}`);
   if (s.tipo === "ida_volta" && s.dataVolta)
     lines.push(`Volta: ${formatBRDate(s.dataVolta)}`);
+  for (const d of s.detalhes || []) lines.push(d);
   lines.push("", "Poderiam confirmar a disponibilidade, o valor atualizado e as condições da viagem?");
   return lines.join("\n");
 }

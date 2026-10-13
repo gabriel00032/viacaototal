@@ -73,6 +73,22 @@ João Pessoa 288 (+Gauchinha 448), São Paulo Barra Funda 184.
 
 NORMAL (padrão), BILHETE DE VIAGEM IDOSO 100% e demais regras da empresa.
 
+## Horários em tempo real (fluxo origem → data → horário → WhatsApp)
+
+- Endpoint: `POST {gateway}/app/sale/trips` (serviço `getTrips`, `searchType: 2`).
+- Nosso backend: `GET /api/horarios?origem=&destino=&data=` (rota em
+  `src/app/api/horarios/route.ts`) — mapeia a cidade simplificada para os nomes
+  oficiais (`src/lib/schedules.ts`, até 2 pontos por lado), consulta os pares em
+  paralelo e devolve partidas ordenadas (hora, chegada, duração, classe,
+  assentos, preço ao vivo). Partidas passadas do dia são filtradas.
+- Front: `SearchForm` → "Buscar horários" → lista clicável → "Selecionar" abre o
+  WhatsApp com origem, destino, data, horário, chegada e valor visto (sempre com
+  pedido de confirmação comercial). Sem resultados ou falha → mensagem honesta +
+  botão genérico de consulta. Nada é exibido sem vir da API.
+- Token: `VIAJETOTAL_API_TOKEN` (`.env.local`, fora do git) — token público do
+  site oficial, só leitura, expira ~10/2027. Renovação: abrir viajetotal.com.br
+  e copiar `access_token` de `localStorage AuthService_TOKEN_INFO_KEY`.
+
 ## Pendente (não exposto publicamente)
 
 - Horários por rota/dia (só via busca com data — exige fluxo de compra).
