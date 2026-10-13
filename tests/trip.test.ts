@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "../src/lib/trip";
-import { candidatosOficiais, shapeTrips, brl } from "../src/lib/schedules";
+import { candidatosOficiais, shapeTrips, brl, pontoDe } from "../src/lib/schedules";
 
 describe("pesquisa de viagens", () => {
   it("aceita origem/destino/data válidos", () => {
@@ -48,5 +48,17 @@ describe("pesquisa de viagens", () => {
     const msg = buildWhatsMessage({ origem: "A", destino: "B", dataIda: "2026-12-01", horario: "07:00", passageiros: 2, tipo: "ida", detalhes: ["Horário: 07:00 (chegada prevista 19:15)"] });
     expect(msg).toMatch(/Horário desejado: 07:00/);
     expect(msg).toMatch(/chegada prevista/);
+  });
+  it("rotula pontos de embarque e não colapsa classes diferentes", () => {
+    expect(pontoDe("CAMPO GRANDE - MS (SAGITARIUS)")).toBe("Sagitarius");
+    expect(pontoDe("CUIABA - MT ( TERMINAL RODOVIARIO )")).toBe("Terminal Rodoviário");
+    expect(pontoDe("RECIFE - PE")).toBe("Ponto principal");
+    const raw = { trips: [
+      { departureDateTime: "2026-12-01T20:30:00", arrivalDateTime: "2026-12-01T23:00:00", duration: { hours: 2, minutes: 30 }, classOfServiceName: "EXECUTIVO", availableSeats: 44, price: 279.04, departureLocationName: "A", arrivalLocationName: "B" },
+      { departureDateTime: "2026-12-01T20:30:00", arrivalDateTime: "2026-12-01T23:00:00", duration: { hours: 2, minutes: 30 }, classOfServiceName: "LEITO", availableSeats: 8, price: 381.6, departureLocationName: "A", arrivalLocationName: "B" },
+    ]};
+    const trips = shapeTrips(raw, "2026-12-01");
+    expect(trips.length).toBe(2);
+    expect(trips.map(t => t.classe).sort()).toEqual(["EXECUTIVO", "LEITO"]);
   });
 });

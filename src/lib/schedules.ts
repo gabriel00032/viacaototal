@@ -11,6 +11,8 @@ export interface TripOption {
   precoOriginal: number | null;
   origem: string;
   destino: string;
+  pontoOrigem: string;  // rótulo curto do ponto (ex: "Terminal Rodoviário", "Coxipó")
+  pontoDestino: string;
 }
 
 // Candidatos oficiais (nomes exatos da API) por cidade simplificada.
@@ -41,6 +43,20 @@ function fmtHora(iso: string): string {
   return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
+// Rótulo curto do ponto a partir do nome oficial:
+// "CAMPO GRANDE - MS (SAGITARIUS)" -> "Sagitarius"
+// "CUIABA - MT ( TERMINAL RODOVIARIO )" -> "Terminal Rodoviário"
+// "RECIFE - PE" -> "Ponto principal"
+export function pontoDe(nomeOficial: string): string {
+  const m = (nomeOficial || "").match(/\(([^)]+)\)/);
+  if (m) {
+    const p = m[1].trim().toLowerCase();
+    if (p.includes("terminal rodoviario")) return "Terminal Rodoviário";
+    return p.replace(/\b\w/g, c => c.toUpperCase());
+  }
+  return "Ponto principal";
+}
+
 export function shapeTrips(raw: any, dataISO: string): TripOption[] {
   const list: TripOption[] = [];
   for (const t of raw?.trips || []) {
@@ -57,6 +73,8 @@ export function shapeTrips(raw: any, dataISO: string): TripOption[] {
       precoOriginal: typeof t.originalPrice === "number" ? t.originalPrice : null,
       origem: t.departureLocationName || "",
       destino: t.arrivalLocationName || "",
+      pontoOrigem: pontoDe(t.departureLocationName || ""),
+      pontoDestino: pontoDe(t.arrivalLocationName || ""),
     };
     list.push(out);
   }

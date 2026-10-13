@@ -3,7 +3,8 @@ import { useState } from "react";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "@/lib/trip";
 import { TripOption, brl } from "@/lib/schedules";
 
-export default function SearchForm({ origens, destinos, whatsapp }: { origens: string[]; destinos: string[]; whatsapp: string }) {
+export default function SearchForm({ locais, whatsapp }: { locais: string[]; whatsapp: string }) {
+  const origens = locais, destinos = locais;
   const [tab, setTab] = useState<"passagem" | "encomenda">("passagem");
   const [origem, setOrigem] = useState("");
   const [destino, setDestino] = useState("");
@@ -38,6 +39,8 @@ export default function SearchForm({ origens, destinos, whatsapp }: { origens: s
   function escolherHorario(t: TripOption) {
     const detalhes = [
       `Horário: ${t.partida} (chegada prevista ${t.chegada}, ${t.classe})`,
+      `Embarque: ${t.origem}`,
+      `Desembarque: ${t.destino}`,
       ...(t.preco !== null ? [`Valor visto no site: ${brl(t.preco)} (sujeito a confirmação)`] : []),
     ];
     const msg = buildWhatsMessage({ origem, destino, dataIda, horario: t.partida, passageiros, tipo: "ida", detalhes });
@@ -102,11 +105,11 @@ export default function SearchForm({ origens, destinos, whatsapp }: { origens: s
               <p className="font-display font-bold text-navy text-sm mb-2">Horários disponíveis — escolha um para ir ao WhatsApp:</p>
               <div className="grid gap-2">
                 {trips.map(t => (
-                  <button key={`${t.partida}-${t.origem}`} onClick={() => escolherHorario(t)}
+                  <button key={`${t.partida}-${t.origem}-${t.classe}-${t.preco}`} onClick={() => escolherHorario(t)}
                     className="w-full flex items-center justify-between gap-3 border border-slate-200 rounded-xl px-4 py-3 hover:border-whatsapp hover:shadow text-left transition">
                     <span>
                       <span className="block font-display font-extrabold text-navy text-lg">{t.partida} <span className="text-slate-400 font-semibold text-sm">→ {t.chegada}</span></span>
-                      <span className="block text-xs text-slate-500">{t.classe} · {t.duracao} · {t.assentos} assentos · {brl(t.preco)}</span>
+                      <span className="block text-xs text-slate-500">{t.pontoOrigem} → {t.pontoDestino} · {t.classe} · {t.duracao} · {t.assentos} assentos · {brl(t.preco)}</span>
                     </span>
                     <span className="shrink-0 bg-whatsapp text-white rounded-lg px-4 py-2 text-sm font-bold">Selecionar</span>
                   </button>

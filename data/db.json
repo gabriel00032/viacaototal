@@ -179,6 +179,14 @@
     {
       "rota": "Cuiabá → Campo Grande",
       "total": 1
+    },
+    {
+      "rota": "Campo Grande → Brasília",
+      "total": 1
+    },
+    {
+      "rota": "Cuiabá - MT → Campo Grande - MS 07:00",
+      "total": 1
     }
   ]
 }

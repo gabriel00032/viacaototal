@@ -1,7 +1,16 @@
 import SearchForm from "@/components/SearchForm";
 import FeaturedCards from "@/components/FeaturedCards";
 import Link from "next/link";
+import fs from "fs";
+import path from "path";
 import { loadDB } from "@/lib/store";
+
+function locaisOficiais(): string[] {
+  try {
+    const raw = fs.readFileSync(path.join(process.cwd(), "data", "locations-official.json"), "utf-8");
+    return (JSON.parse(raw).locations as { name: string }[]).map(l => l.name);
+  } catch { return []; }
+}
 
 const DIFERENCIAIS = [
   { t: "Custo Benefício", i: "💰" },
@@ -13,7 +22,7 @@ const DIFERENCIAIS = [
 
 export default function Home() {
   const db = loadDB();
-  const cities = db.destinations.filter(d => d.ativo).map(d => `${d.cidade} - ${d.uf}`);
+  const locais = locaisOficiais();
   const trips = db.featured.filter(f => f.ativo).sort((a, b) => a.posicao - b.posicao);
   const wa = db.settings.salesWhatsapp || process.env.SALES_WHATSAPP || "";
   return (
@@ -26,7 +35,7 @@ export default function Home() {
             Sua viagem com a <span className="text-accent">Viação Total</span>, reservada em minutos.
           </h1>
           <p className="text-white/80 mt-3 max-w-2xl">Escolha a origem, o destino e a data. Atendimento direto pelo WhatsApp, sem pagamento online.</p>
-          <div className="mt-6"><SearchForm origens={cities} destinos={cities} whatsapp={wa} /></div>
+          <div className="mt-6"><SearchForm locais={locais} whatsapp={wa} /></div>
           <div className="flex justify-center gap-6 flex-wrap text-center text-xs mt-6 text-white/90">
             {DIFERENCIAIS.map(d => <div key={d.t} className="w-24"><div className="text-2xl">{d.i}</div><div className="font-semibold mt-1">{d.t}</div></div>)}
           </div>

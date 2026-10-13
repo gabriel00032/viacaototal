@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
 import { candidatosOficiais, shapeTrips, TripOption } from "@/lib/schedules";
 
 const GATEWAY = "https://prod-motta-proxy-api-smartbus.smarttravelit.com";
@@ -9,7 +11,21 @@ const HEADERS = {
   "IdUser": "2514",
 };
 
-// GET /api/horarios?origem=Cuiabá - MT&destino=Campo Grande - MS&data=2026-10-20
+function nomesOficiais(): Set<string> {
+  try {
+    const raw = fs.readFileSync(path.join(process.cwd(), "data", "locations-official.json"), "utf-8");
+    return new Set((JSON.parse(raw).locations as { name: string }[]).map(l => l.name));
+  } catch { return new Set(); }
+}
+
+// Resolve o valor do select: se já é nome oficial, usa direto;
+// senão, mapeia a cidade simplificada para os pontos oficiais.
+function resolver(valor: string, oficiais: Set<string>): string[] {
+  if (oficiais.has(valor)) return [valor];
+  return candidatosOficiais(valor).slice(0, 2);
+}
+
+// GET /api/horarios?origem=&destino=&data=YYYY-MM-DD
 // Retorna horários REAIS da API oficial. Sem fallback inventado.
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -17,9 +33,10 @@ export async function GET(req: Request) {
   const destino = url.searchParams.get("destino") || "";
   const data = url.searchParams.get("data") || ""; // YYYY-MM-DD
   const token = process.env.VIAJETOTAL_API_TOKEN || "";
+  const oficiais = nomesOficiais();
 
-  const dep = candidatosOficiais(origem).slice(0, 2);
-  const arr = candidatosOficiais(destino).slice(0, 2);
+  const dep = resolver(origem, oficiais);
+  const arr = resolver(destino, oficiais);
   if (!dep.length || !arr.length || !/^\d{4}-\d{2}-\d{2}$/.test(data))
     return NextResponse.json({ ok: false, error: "Origem, destino ou data inválidos.", trips: [] }, { status: 400 });
   if (!token)
@@ -49,13 +66,15 @@ export async function GET(req: Request) {
       } catch { return []; }
       finally { clearTimeout(timer); }
     }));
+    // Deduplica por partida + pontos + CLASSE (o mesmo horário pode ter
+    // EXECUTIVO, LEITO etc. — são opções diferentes, não duplicatas).
     const seen = new Set<string>();
     const trips: TripOption[] = [];
     for (const t of results.flat()) {
-      const k = `${t.partida}|${t.origem}|${t.destino}`;
+      const k = `${t.partida}|${t.origem}|${t.destino}|${t.classe}|${t.preco}`;
       if (!seen.has(k)) { seen.add(k); trips.push(t); }
     }
-    trips.sort((a, b) => a.partida.localeCompare(b.partida));
+    trips.sort((a, b) => a.partida.localeCompare(b.partida) || a.classe.localeCompare(b.classe));
     return NextResponse.json({ ok: true, trips });
   } catch {
     return NextResponse.json({ ok: false, error: "Falha ao consultar horários.", trips: [] }, { status: 502 });
