@@ -13,11 +13,15 @@ export function SwRegister() {
 export function InstallApp() {
   const [evt, setEvt] = useState<any>(null);
   const [ios, setIos] = useState(false);
+  const [mobile, setMobile] = useState(false);
   useEffect(() => {
     const onPrompt = (e: any) => { e.preventDefault(); setEvt(e); };
     window.addEventListener("beforeinstallprompt", onPrompt);
-    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent) && !(window as any).MSStream;
+    const ua = navigator.userAgent;
+    const isIos = /iphone|ipad|ipod/i.test(ua) && !(window as any).MSStream;
     const standalone = window.matchMedia("(display-mode: standalone)").matches || (navigator as any).standalone;
+    // Somente mobile: no computador o banner nunca aparece.
+    setMobile(/android|iphone|ipad|ipod|mobile/i.test(ua) || (navigator.maxTouchPoints > 1 && Math.min(screen.width, screen.height) < 820));
     setIos(isIos && !standalone);
     return () => window.removeEventListener("beforeinstallprompt", onPrompt);
   }, []);
@@ -27,6 +31,7 @@ export function InstallApp() {
     await evt.userChoice.catch(() => {});
     setEvt(null);
   }
+  if (!mobile) return null;
   if (!evt && !ios) return null;
   return (
     <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-accent/60 bg-accent/10 px-4 py-3 text-sm">
