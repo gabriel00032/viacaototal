@@ -42,16 +42,16 @@ export default function AdminLogin() {
 
   const fundo = ap.telaLogin.fundoUrl;
   return (
-    <div className="min-h-screen grid lg:grid-cols-2">
+    <div className="min-h-screen grid lg:grid-cols-2 relative">
+      {fundo ? (
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={fundo} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-navy/70" />
+        </>
+      ) : null}
       {/* Painel da marca */}
-      <div className="hero-gradient text-white hidden lg:flex flex-col justify-between p-10 relative overflow-hidden">
-        {fundo ? (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={fundo} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-navy/70" />
-          </>
-        ) : null}
+      <div className={`text-white hidden lg:flex flex-col justify-between p-10 relative overflow-hidden ${fundo ? "bg-transparent" : "hero-gradient"}`}>
         <div className="relative">
           {ap.marca.logoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -72,11 +72,11 @@ export default function AdminLogin() {
         <p className="text-xs text-white/50 relative">{ap.telaLogin.dica}</p>
       </div>
       {/* Formulário */}
-      <div className="flex items-center justify-center bg-[#eef2f7] p-6">
+      <div className={`relative flex items-center justify-center p-6 ${fundo ? "bg-transparent" : "bg-[#eef2f7]"}`}>
         <div className="w-full max-w-sm">
-          <p className="font-display text-xl font-extrabold text-navy lg:hidden">{ap.marca.nomeA} <span className="text-accent">{ap.marca.nomeB}</span></p>
-          <h2 className="font-display text-2xl font-extrabold text-navy mt-2">Entrar no painel</h2>
-          <p className="text-sm text-slate-500 mt-1">Use suas credenciais de administrador.</p>
+          <p className={`font-display text-xl font-extrabold lg:hidden ${fundo ? "text-white" : "text-navy"}`}>{ap.marca.nomeA} <span className="text-accent">{ap.marca.nomeB}</span></p>
+          <h2 className={`font-display text-2xl font-extrabold mt-2 ${fundo ? "text-white" : "text-navy"}`}>Entrar no painel</h2>
+          <p className={`text-sm mt-1 ${fundo ? "text-white/70" : "text-slate-500"}`}>Use suas credenciais de administrador.</p>
           <form onSubmit={submit} className="card p-6 mt-5 grid gap-4">
             <div>
               <label className="label" htmlFor="admin-user">Usuário</label>
@@ -96,7 +96,7 @@ export default function AdminLogin() {
               {loading ? "Entrando…" : "Entrar →"}
             </button>
           </form>
-          <Link href="/" className="block text-center text-sm text-slate-500 hover:text-navy mt-4">← Voltar ao site</Link>
+          <Link href="/" className={`block text-center text-sm mt-4 ${fundo ? "text-white/70 hover:text-white" : "text-slate-500 hover:text-navy"}`}>← Voltar ao site</Link>
         </div>
       </div>
     </div>

@@ -18,6 +18,12 @@
     "notaEsquerda": "© 2026 AM VIAGENS E TURISMO — Todos os direitos Reservados.",
     "notaDireita": "viajetotal.com.br"
   },
+  "telaLogin": {
+    "titulo": "Painel da agência.",
+    "subtitulo": "Gerencie passagens, destinos, horários, conteúdo do site e o WhatsApp comercial — tudo refletindo na hora, sem mexer no código.",
+    "dica": "Acesso restrito · sessão protegida de 12h",
+    "fundoUrl": "/api/arquivos/1791945013573-131b7568853f.jpg"
+  },
   "minis": [
     {
       "icone": "💰",
