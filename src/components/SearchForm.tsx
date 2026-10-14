@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "@/lib/trip";
-import { TripOption, brl } from "@/lib/schedules";
+import { TripOption, brl, linhaPercurso } from "@/lib/schedules";
 import LocalitySelect from "@/components/LocalitySelect";
 
 export default function SearchForm({ locais, whatsapp }: { locais: string[]; whatsapp: string }) {
@@ -18,6 +18,8 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
   const [trips, setTrips] = useState<TripOption[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [tripsError, setTripsError] = useState("");
+  const hojeISO = new Date().toISOString().slice(0, 10);
+  const dataPassada = !!dataIda && dataIda < hojeISO;
 
   function resetTrips() { setTrips(null); setTripsError(""); setLink(null); }
 
@@ -40,13 +42,15 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
   function escolherHorario(t: TripOption) {
     const percurso = t.trechos.length
       ? t.trechos.map((s, i) =>
-          `Trecho ${i + 1}: ${s.origem || "?"}${s.partida ? ` (${s.partida})` : ""} → ${s.destino || "?"}${s.chegada ? ` (${s.chegada})` : ""}`
+          `Trecho ${i + 1}: ${s.origem || "?"}${s.partida ? ` (${s.partida})` : ""} → ${s.destino || "?"}${s.chegada ? ` (${s.chegada})` : ""}${s.linha ? ` [${s.linha}]` : ""}`
         ).join("\n")
       : null;
     const detalhes = [
-      `Horário: ${t.partida} (chegada prevista ${t.chegada}, ${t.classe})`,
+      `Horário: ${t.partida} (chegada prevista ${t.chegada}${t.diasDepois ? `, +${t.diasDepois} dia(s)` : ""}, ${t.classe})`,
       `Embarque: ${t.origem}`,
       `Desembarque: ${t.destino}`,
+      ...(t.empresa ? [`Empresa: ${t.empresa}`] : []),
+      ...(t.plataforma ? [`Plataforma indicada: ${t.plataforma}`] : []),
       ...(t.conexao ? ["Viagem COM CONEXÃO (troca de ônibus no trajeto)"] : []),
       ...(percurso ? [`Percurso até o destino final:\n${percurso}`] : []),
       ...(t.preco !== null ? [`Valor visto no site: ${brl(t.preco)} (sujeito a confirmação)`] : []),
@@ -101,29 +105,43 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
               {errors.map(e => <li key={e}>• {e}</li>)}
             </ul>
           )}
+          {dataPassada && errors.length === 0 && (
+            <p className="mt-3 text-amber-800 text-sm bg-amber-50 border border-amber-200 rounded p-3">Data passada — exibindo como referência. Confirme disponibilidade e valores atuais com o vendedor no WhatsApp.</p>
+          )}
 
           {trips !== null && trips.length > 0 && (
             <div className="mt-4" aria-live="polite">
               <p className="font-display font-bold text-navy text-sm mb-2">Horários disponíveis — escolha um para ir ao WhatsApp:</p>
               <div className="grid gap-2">
-                {trips.map(t => (
-                  <button key={`${t.partida}-${t.origem}-${t.classe}-${t.preco}`} onClick={() => escolherHorario(t)}
-                    className="w-full flex items-center justify-between gap-3 border border-slate-200 rounded-xl px-4 py-3 hover:border-whatsapp hover:shadow text-left transition">
-                    <span>
-                      <span className="block font-display font-extrabold text-navy text-lg">{t.partida} <span className="text-slate-400 font-semibold text-sm">→ {t.chegada}</span>
-                        {t.conexao && <span className="ml-2 align-middle text-[11px] font-bold bg-accent text-white rounded px-2 py-0.5">COM CONEXÃO</span>}</span>
-                      <span className="block text-xs text-slate-500">{t.pontoOrigem} → {t.pontoDestino} · {t.classe} · {t.duracao} · {t.assentos} assentos · {brl(t.preco)}</span>
-                      {t.conexao && (
-                        <span className="block text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded px-2 py-1 mt-1">
-                          {t.trechos.length
-                            ? `Percurso: ${t.trechos.map(s => [s.origem && s.partida ? `${s.origem} (${s.partida})` : s.origem, s.destino && s.chegada ? `${s.destino} (${s.chegada})` : s.destino].filter(Boolean).join(" → ")).join(" → ")}`
-                            : `Com conexão até ${t.destino} — confirme os trechos e horários no WhatsApp`}
-                        </span>
-                      )}
-                    </span>
-                    <span className="shrink-0 bg-whatsapp text-white rounded-lg px-4 py-2 text-sm font-bold">Selecionar</span>
-                  </button>
-                ))}
+                {trips.map(t => {
+                  const corpo = (
+                    <>
+                      <span className="min-w-0">
+                        <span className={`block font-display font-extrabold text-lg ${t.partiu ? "text-slate-400" : "text-navy"}`}>{t.partida} <span className="text-slate-400 font-semibold text-sm">→ {t.chegada}{t.diasDepois > 0 && ` +${t.diasDepois} dia${t.diasDepois > 1 ? "s" : ""}`}</span>
+                          {t.conexao && <span className="ml-2 align-middle text-[11px] font-bold bg-accent text-white rounded px-2 py-0.5">COM CONEXÃO</span>}
+                          {t.partiu && <span className="ml-2 align-middle text-[11px] font-bold bg-slate-300 text-slate-600 rounded px-2 py-0.5">JÁ PARTIU</span>}</span>
+                        <span className="block text-xs text-slate-500">{t.pontoOrigem} → {t.pontoDestino} · {t.classe} · {t.duracao}{t.empresa ? ` · ${t.empresa}` : ""}</span>
+                        <span className="block text-xs text-slate-500 font-semibold">{brl(t.preco)} · {t.assentos} assentos{t.plataforma ? ` · Plataforma ${t.plataforma}` : ""}</span>
+                        {t.conexao && (
+                          <span className="block text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded px-2 py-1 mt-1">
+                            {t.trechos.length
+                              ? `Percurso: ${linhaPercurso(t.trechos)}`
+                              : `Com conexão até ${t.destino} — confirme os trechos e horários no WhatsApp`}
+                          </span>
+                        )}
+                      </span>
+                      {t.partiu
+                        ? <span className="shrink-0 bg-slate-200 text-slate-500 rounded-lg px-4 py-2 text-sm font-bold">Encerrada</span>
+                        : <span className="shrink-0 bg-whatsapp text-white rounded-lg px-4 py-2 text-sm font-bold">Selecionar</span>}
+                    </>
+                  );
+                  return t.partiu ? (
+                    <div key={`${t.partida}-${t.origem}-${t.classe}-${t.preco}`} className="w-full flex items-center justify-between gap-3 border border-slate-200 bg-slate-50 rounded-xl px-4 py-3 text-left opacity-80">{corpo}</div>
+                  ) : (
+                    <button key={`${t.partida}-${t.origem}-${t.classe}-${t.preco}`} onClick={() => escolherHorario(t)}
+                      className="w-full flex items-center justify-between gap-3 border border-slate-200 rounded-xl px-4 py-3 hover:border-whatsapp hover:shadow text-left transition">{corpo}</button>
+                  );
+                })}
               </div>
             </div>
           )}

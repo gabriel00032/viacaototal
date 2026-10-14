@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "../src/lib/trip";
-import { candidatosOficiais, shapeTrips, brl, pontoDe, filtrarLocais, extrairTrechos } from "../src/lib/schedules";
+import { candidatosOficiais, shapeTrips, brl, pontoDe, filtrarLocais, extrairTrechos, curto, linhaPercurso } from "../src/lib/schedules";
 
 describe("pesquisa de viagens", () => {
   it("aceita origem/destino/data válidos", () => {
@@ -9,9 +9,12 @@ describe("pesquisa de viagens", () => {
   it("bloqueia origem igual ao destino", () => {
     expect(validateSearch({ origem: "Cuiabá", destino: "cuiabá", dataIda: "2026-12-01" }).join()).toMatch(/iguais/);
   });
-  it("bloqueia data no passado e campos vazios", () => {
+  it("bloqueia data inválida e campos vazios", () => {
     expect(validateSearch({ origem: "", destino: "", dataIda: "" }).length).toBeGreaterThan(0);
-    expect(validateSearch({ origem: "A", destino: "B", dataIda: "2020-01-01" }).join()).toMatch(/passado/);
+    expect(validateSearch({ origem: "A", destino: "B", dataIda: "invalida" }).join()).toMatch(/inválida/);
+  });
+  it("permite data passada para consulta de referência (exemplo oficial)", () => {
+    expect(validateSearch({ origem: "A", destino: "B", dataIda: "2020-01-01" })).toEqual([]);
   });
   it("monta mensagem WhatsApp com codificação correta", () => {
     const msg = buildWhatsMessage({ origem: "Cuiabá", destino: "Campo Grande", dataIda: "2026-12-01", horario: "08:00", passageiros: 2, tipo: "ida" });
@@ -72,22 +75,45 @@ describe("pesquisa de viagens", () => {
   });
   it("detecta conexão (tripType 2) e extrai o percurso trecho a trecho", () => {
     const conn = {
-      departureDateTime: "2026-12-01T08:00:00", arrivalDateTime: "2026-12-01T20:00:00",
-      duration: { hours: 12, minutes: 0 }, classOfServiceName: "CONVENCIONAL",
-      availableSeats: 10, price: 200, departureLocationName: "A", arrivalLocationName: "C",
+      departureDateTime: "2027-03-10T11:05:00", arrivalDateTime: "2027-03-11T12:35:00",
+      duration: { hours: 25, minutes: 30 }, classOfServiceName: "EXECUTIVO",
+      availableSeats: 25, price: 380, originalPrice: 726.19,
+      departureLocationName: "RONDONOPOLIS - MT ( TERMINAL RODOVIARIO )",
+      arrivalLocationName: "SAO PAULO-SP (TERMINAL RODOVIARIO BARRA FUNDA)",
+      boardingPlatform: "03 à 06", companyName: "VIACAO TOTAL", departureArrivalDiffDays: 1,
       tripKey: { tripType: 2 },
       routes: [
-        { departureLocationName: "A", arrivalLocationName: "B", departureDateTime: "2026-12-01T08:00:00", arrivalDateTime: "2026-12-01T12:00:00" },
-        { departureLocationName: "B", arrivalLocationName: "C", departureDateTime: "2026-12-01T14:00:00", arrivalDateTime: "2026-12-01T20:00:00" },
+        { departureLocationName: "RONDONOPOLIS - MT ( TERMINAL RODOVIARIO )", arrivalLocationName: "CAMPO GRANDE - MS ( TERMINAL RODOVIARIO )", departureDateTime: { hour: 11, minute: 5 }, arrivalDateTime: { hour: 19, minute: 15 }, scheduleName: "CUIABA(MT) - LONDRINA(PR) " },
+        { departureLocationName: "CAMPO GRANDE - MS ( TERMINAL RODOVIARIO )", arrivalLocationName: "SAO PAULO-SP (TERMINAL RODOVIARIO BARRA FUNDA)", departureDateTime: { hour: 20, minute: 30 }, arrivalDateTime: { hour: 12, minute: 35 }, scheduleName: "CAMPO GRANDE(MS) - SAO PAULO(SP) " },
       ],
     };
-    const [c] = shapeTrips({ trips: [conn] }, "2026-12-01");
+    const [c] = shapeTrips({ trips: [conn] }, "2027-03-10");
     expect(c.conexao).toBe(true);
+    expect(c.diasDepois).toBe(1);
+    expect(c.plataforma).toBe("03 à 06");
+    expect(c.empresa).toBe("VIACAO TOTAL");
     expect(c.trechos.length).toBe(2);
-    expect(c.trechos[0]).toMatchObject({ origem: "A", destino: "B", partida: "08:00", chegada: "12:00" });
-    expect(c.trechos[1]).toMatchObject({ origem: "B", destino: "C", partida: "14:00", chegada: "20:00" });
+    expect(c.trechos[0]).toMatchObject({ partida: "11:05", chegada: "19:15", linha: "CUIABA(MT) - LONDRINA(PR)" });
+    expect(c.trechos[1]).toMatchObject({ partida: "20:30", chegada: "12:35", linha: "CAMPO GRANDE(MS) - SAO PAULO(SP)" });
     expect(extrairTrechos({ routes: [{ tripKey: {} }] })).toEqual([]);
     const msg = buildWhatsMessage({ origem: "A", destino: "C", dataIda: "2026-12-01", horario: "08:00", tipo: "ida", detalhes: ["Viagem COM CONEXÃO (troca de ônibus no trajeto)"] });
     expect(msg).toMatch(/COM CONEXÃO/);
+  });
+  it("monta a linha de percurso encadeada como no original", () => {    expect(curto("RONDONOPOLIS - MT ( TERMINAL RODOVIARIO )")).toBe("Rondonopolis");
+    expect(curto("SAO PAULO-SP (TERMINAL RODOVIARIO BARRA FUNDA)")).toBe("Sao Paulo");
+    expect(curto("CUIABA (COXIPO) - MT")).toBe("Cuiaba");
+    const linha = linhaPercurso([
+      { origem: "RONDONOPOLIS - MT ( TERMINAL RODOVIARIO )", destino: "CAMPO GRANDE - MS ( TERMINAL RODOVIARIO )", partida: "11:05", chegada: "19:15", linha: null },
+      { origem: "CAMPO GRANDE - MS ( TERMINAL RODOVIARIO )", destino: "SAO PAULO-SP (TERMINAL RODOVIARIO BARRA FUNDA)", partida: "20:30", chegada: "12:35", linha: null },
+    ]);
+    expect(linha).toBe("Rondonopolis (11:05) → Campo Grande (19:15) → Sao Paulo (12:35)");
+  });
+  it("marca partidas de hoje já ocorridas como 'partiu' em vez de ocultar", () => {
+    const hoje = new Date().toISOString().slice(0, 10);
+    const raw = { trips: [
+      { departureDateTime: `${hoje}T00:01:00`, arrivalDateTime: `${hoje}T12:00:00`, duration: { hours: 11, minutes: 59 }, classOfServiceName: "EXECUTIVO", availableSeats: 1, price: 100, departureLocationName: "A", arrivalLocationName: "B" },
+    ]};
+    const [t] = shapeTrips(raw, hoje);
+    expect(t.partiu).toBe(true);
   });
 });

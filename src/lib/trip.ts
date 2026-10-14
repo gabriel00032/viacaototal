@@ -19,10 +19,10 @@ export function validateSearch(s: SearchInput): string[] {
     errors.push("Origem e destino não podem ser iguais.");
   if (!s.dataIda) errors.push("Escolha a data da viagem.");
   else {
-    const hoje = new Date(); hoje.setHours(0, 0, 0, 0);
     const d = new Date(s.dataIda + "T12:00:00");
     if (isNaN(d.getTime())) errors.push("Data inválida.");
-    else if (d < hoje) errors.push("A data não pode estar no passado.");
+    // Datas passadas são permitidas para consulta de referência (ex.: conferir
+    // uma viagem que já ocorreu); a interface avisa e o vendedor confirma.
   }
   if (s.tipo === "ida_volta") {
     if (!s.dataVolta) errors.push("Escolha a data de volta.");

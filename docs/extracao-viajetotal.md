@@ -96,6 +96,14 @@ NORMAL (padrão), BILHETE DE VIAGEM IDOSO 100% e demais regras da empresa.
   com campos presentes (nomes/horários por trecho). Diretas têm 1 trecho e não
   exibem selo. Em ~25 pares/datas sondados a API não retornou conexões — quando
   retornar, o site já as especifica com o percurso até o destino final.
+- **Exemplo validado — Rondonópolis → São Paulo, 14/10/2026** (igual ao original):
+  11:05 → 12:35 (+1 dia), 25h30, EXECUTIVO, R$ 380,00 (era R$ 726,19),
+  25 assentos, plataforma "03 à 06", VIAÇÃO TOTAL, `tripType: 2`, 2 trechos:
+  Rondonópolis 11:05 → Campo Grande 19:15 (8h10, linha CUIABA(MT)-LONDRINA(PR))
+  + Campo Grande 20:30 → São Paulo 12:35+1 (15h05, linha CG-SP). A linha é
+  diária (verificado 15–18/10, mesmo horário/valor).
+- Partidas de hoje já ocorridas: flag `partiu`, exibidas desabilitadas com selo
+  "JÁ PARTIU"/"Encerrada" (referência, sem WhatsApp) em vez de ocultas.
 - Token: `VIAJETOTAL_API_TOKEN` (`.env.local`, fora do git) — token público do
   site oficial, só leitura, expira ~10/2027. Renovação: abrir viajetotal.com.br
   e copiar `access_token` de `localStorage AuthService_TOKEN_INFO_KEY`.

@@ -6,6 +6,7 @@ export interface Trecho {
   destino: string | null;
   partida: string | null;  // "07:00"
   chegada: string | null;
+  linha: string | null;    // ex: "CAMPO GRANDE(MS) - SAO PAULO(SP)"
 }
 
 export interface TripOption {
@@ -22,6 +23,10 @@ export interface TripOption {
   pontoDestino: string;
   conexao: boolean;  // true quando a API indica trecho com conexão/troca de ônibus
   trechos: Trecho[]; // percurso trecho a trecho até o destino final (quando informado)
+  plataforma: string | null; // ex: "03 à 06" (boardingPlatform da API)
+  empresa: string | null;    // ex: "VIACAO TOTAL" (companyName da API)
+  diasDepois: number;        // 0 = chega no mesmo dia; 1+ = chega dia(s) depois
+  partiu: boolean;           // true quando a partida já ocorreu (exibida desabilitada)
 }
 
 // Candidatos oficiais (nomes exatos da API) por cidade simplificada.
@@ -47,12 +52,42 @@ export function candidatosOficiais(cidadeSimplificada: string): string[] {
   return CANDIDATOS[key] || [];
 }
 
-function fmtHora(iso: string): string {
-  const d = new Date(iso);
-  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+// Horário a partir de string ISO ou do objeto {hour, minute} da API
+// (usa os campos de parede hour/minute, sem conversão de fuso).
+export function horaDe(v: any): string | null {
+  if (typeof v === "string") {
+    const d = new Date(v);
+    if (isNaN(d.getTime())) return null;
+    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  }
+  if (v && typeof v.hour === "number" && typeof v.minute === "number")
+    return `${String(v.hour).padStart(2, "0")}:${String(v.minute).padStart(2, "0")}`;
+  return null;
 }
 
-// Rótulo curto do ponto a partir do nome oficial:
+function fmtHora(iso: string): string {
+  return horaDe(iso) || "--:--";
+}
+
+// Nome curto (cidade) para o percurso: "RONDONOPOLIS - MT ( TERMINAL RODOVIARIO )"
+// -> "Rondonopolis"; "SAO PAULO-SP (TERMINAL RODOVIARIO BARRA FUNDA)" -> "Sao Paulo".
+export function curto(nome: string | null): string {
+  if (!nome) return "?";
+  let base = nome.split(" (")[0].split(" - ")[0].trim().replace(/-[A-Z]{2}$/, "");
+  base = base.toLowerCase().replace(/(?:^|\s)\S/g, c => c.toUpperCase());
+  return base || "?";
+}
+
+// Linha de percurso encadeada: "Rondonopolis (11:05) → Campo Grande (19:15) → São Paulo (12:35)"
+export function linhaPercurso(trechos: Trecho[]): string {
+  if (!trechos.length) return "";
+  const partes: string[] = [];
+  const first = trechos[0];
+  partes.push(`${curto(first.origem)}${first.partida ? ` (${first.partida})` : ""}`);
+  for (const s of trechos)
+    partes.push(`${curto(s.destino)}${s.chegada ? ` (${s.chegada})` : ""}`);
+  return partes.join(" → ");
+}
 // "CAMPO GRANDE - MS (SAGITARIUS)" -> "Sagitarius"
 // "CUIABA - MT ( TERMINAL RODOVIARIO )" -> "Terminal Rodoviário"
 // "RECIFE - PE" -> "Ponto principal"
@@ -74,14 +109,16 @@ export function extrairTrechos(t: any): Trecho[] {
   for (const leg of legs) {
     const o = leg?.departureLocationName ?? leg?.departureName ?? leg?.origin ?? null;
     const d = leg?.arrivalLocationName ?? leg?.arrivalName ?? leg?.destination ?? null;
-    const dt = leg?.departureDateTime ?? leg?.departure ?? null;
-    const at = leg?.arrivalDateTime ?? leg?.arrival ?? null;
+    const dt = horaDe(leg?.departureDateTime ?? leg?.departure ?? null);
+    const at = horaDe(leg?.arrivalDateTime ?? leg?.arrival ?? null);
+    const linha = typeof leg?.scheduleName === "string" ? leg.scheduleName.trim() || null : null;
     if (o || d) {
       out.push({
         origem: typeof o === "string" ? o : null,
         destino: typeof d === "string" ? d : null,
-        partida: typeof dt === "string" ? fmtHora(dt) : null,
-        chegada: typeof at === "string" ? fmtHora(at) : null,
+        partida: dt,
+        chegada: at,
+        linha,
       });
     }
   }
@@ -90,6 +127,8 @@ export function extrairTrechos(t: any): Trecho[] {
 
 export function shapeTrips(raw: any, dataISO: string): TripOption[] {
   const list: TripOption[] = [];
+  const hoje = new Date().toISOString().slice(0, 10);
+  const agora = new Date();
   for (const t of raw?.trips || []) {
     if (!t?.departureDateTime) continue;
     const conexao = t.tripKey?.tripType === 2 || Boolean(t.isConnection);
@@ -109,20 +148,21 @@ export function shapeTrips(raw: any, dataISO: string): TripOption[] {
       pontoDestino: pontoDe(t.arrivalLocationName || ""),
       conexao,
       trechos: extrairTrechos(t),
+      plataforma: typeof t.boardingPlatform === "string" && t.boardingPlatform.trim() ? t.boardingPlatform.trim() : null,
+      empresa: typeof t.companyName === "string" && t.companyName.trim() ? t.companyName.trim() : null,
+      diasDepois: Number(t.departureArrivalDiffDays ?? 0) || 0,
+      partiu: false,
     };
+    if (dataISO === hoje) {
+      const [h, m] = out.partida.split(":").map(Number);
+      const d = new Date(); d.setHours(h, m, 0, 0);
+      out.partiu = d.getTime() <= agora.getTime();
+    }
     list.push(out);
   }
-  // Remove partidas já passadas (somente para a data de hoje)
-  const hoje = new Date().toISOString().slice(0, 10);
-  const agora = new Date();
-  const filtrados = dataISO === hoje
-    ? list.filter(o => {
-        const [h, m] = o.partida.split(":").map(Number);
-        const d = new Date(); d.setHours(h, m, 0, 0);
-        return d.getTime() > agora.getTime();
-      })
-    : list;
-  return filtrados.sort((a, b) => a.partida.localeCompare(b.partida));
+  // Partidas de hoje já ocorridas são mantidas com flag `partiu` (exibidas
+  // desabilitadas, como referência) — nunca vendidas pelo WhatsApp.
+  return list.sort((a, b) => a.partida.localeCompare(b.partida));
 }
 
 export function brl(v: number | null): string {
