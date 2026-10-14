@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 
-export type Campo = "featured" | "destinations" | "schedules" | "settings" | "hero" | "minis" | "difcards" | "cta" | "pontos" | "quemsomos" | "faqs" | "marca" | "rodape";
+export type Campo = "featured" | "destinations" | "schedules" | "settings" | "hero" | "minis" | "difcards" | "cta" | "pontos" | "quemsomos" | "faqs" | "marca" | "rodape" | "telalogin";
 
 const TITULOS: Record<Campo, string> = {
   featured: "Passagens mais buscadas", destinations: "Destinos (curadoria)", schedules: "Horários cadastrados",
   settings: "Configurações e WhatsApp", hero: "Topo da página inicial", minis: "Diferenciais (faixa de ícones)",
   difcards: "Diferenciais (cartões)", cta: "Chamada para WhatsApp", pontos: "Pontos de venda",
   quemsomos: "Quem Somos", faqs: "Dúvidas frequentes", marca: "Marca e logo", rodape: "Rodapé",
+  telalogin: "Tela inicial do painel",
 };
 
 function Upload({ label, value, onDone }: { label: string; value: string; onDone: (url: string) => void }) {
@@ -123,6 +124,18 @@ export default function AdminEditor({ campo, campos }: { campo: Campo; campos?: 
               <Area label="Texto" value={db.cta.texto} onChange={(v: string) => set({ cta: { ...db.cta, texto: v } })} rows={2} />
             </>)}
             {c === "quemsomos" && <Area label="Texto institucional" value={db.quemSomos.texto} onChange={(v: string) => set({ quemSomos: { texto: v } })} rows={8} />}
+            {c === "telalogin" && (<>
+              <Txt label="Título do painel" value={db.telaLogin.titulo} onChange={(v: string) => set({ telaLogin: { ...db.telaLogin, titulo: v } })} />
+              <Area label="Subtítulo" value={db.telaLogin.subtitulo} rows={3} onChange={(v: string) => set({ telaLogin: { ...db.telaLogin, subtitulo: v } })} />
+              <Txt label="Linha inferior (dica)" value={db.telaLogin.dica} onChange={(v: string) => set({ telaLogin: { ...db.telaLogin, dica: v } })} />
+              <Upload label="Imagem de fundo da tela de login" value={db.telaLogin.fundoUrl} onDone={(url: string) => set({ telaLogin: { ...db.telaLogin, fundoUrl: url } })} />
+              <Txt label="...ou URL da imagem" value={db.telaLogin.fundoUrl} placeholder="/api/arquivos/… ou https://…" onChange={(v: string) => set({ telaLogin: { ...db.telaLogin, fundoUrl: v } })} />
+              {db.telaLogin.fundoUrl && /\.(png|jpe?g|webp|svg)(\?|#|$)/i.test(db.telaLogin.fundoUrl) && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={db.telaLogin.fundoUrl} alt="pré-visualização do fundo" className="h-24 w-full object-cover rounded border" />
+              )}
+              <p className="text-xs text-slate-500">A marca (nome/logo) exibida aqui é a mesma de "Marca e logo".</p>
+            </>)}
             {c === "featured" && (<>
               {db.featured.map((f: any, i: number) => (
                 <div key={f.id} className="border rounded-lg p-3 grid sm:grid-cols-6 gap-2 text-sm bg-slate-50">

@@ -77,6 +77,14 @@ export async function PUT(req: Request) {
     };
   }
   if (body.rodape) db.rodape = { sobre: str(body.rodape.sobre, 500), notaEsquerda: str(body.rodape.notaEsquerda, 200), notaDireita: str(body.rodape.notaDireita, 200) };
+  if (body.telaLogin) {
+    db.telaLogin = {
+      titulo: str(body.telaLogin.titulo, 120),
+      subtitulo: str(body.telaLogin.subtitulo, 500),
+      dica: str(body.telaLogin.dica, 200),
+      fundoUrl: str(body.telaLogin.fundoUrl, 500),
+    };
+  }
   if (Array.isArray(body.minis)) {
     db.minis = body.minis.slice(0, 12).map((m: any) => ({ icone: str(m.icone, 8), titulo: str(m.titulo, 60) })).filter((m: any) => m.titulo);
   }

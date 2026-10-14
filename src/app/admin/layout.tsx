@@ -9,6 +9,7 @@ const items = [
   { href: "/admin/horarios", label: "Horários" },
   { href: "/admin/pontos", label: "Pontos de venda" },
   { href: "/admin/marca", label: "Marca e logo" },
+  { href: "/admin/telalogin", label: "Tela de login" },
   { href: "/admin/rodape", label: "Rodapé" },
   { href: "/admin/conteudo", label: "Conteúdo do site" },
   { href: "/admin/faq", label: "Dúvidas frequentes" },

@@ -24,12 +24,14 @@ export interface Ponto { nome: string; endereco: string; horario: string; telefo
 export interface Faq { q: string; a: string; }
 export interface Marca { nomeA: string; nomeB: string; subtitulo: string; logoUrl: string; }
 export interface Rodape { sobre: string; notaEsquerda: string; notaDireita: string; }
+export interface TelaLogin { titulo: string; subtitulo: string; dica: string; fundoUrl: string; }
 export interface DB {
   featured: FeaturedTrip[]; destinations: Destination[];
   schedules: Schedule[]; settings: Settings; clicks: { rota: string; total: number }[];
   hero: { eyebrow: string; tituloA: string; tituloDestaque: string; tituloB: string; subtitulo: string; fundoUrl: string };
   marca: Marca;
   rodape: Rodape;
+  telaLogin: TelaLogin;
   minis: MiniDif[];
   difCards: DifCard[];
   cta: { titulo: string; texto: string };
@@ -40,7 +42,7 @@ export interface DB {
 
 const file = path.join(process.cwd(), "data", "db.json");
 
-const DEFAULTS: Pick<DB, "hero" | "minis" | "difCards" | "cta" | "pontos" | "quemSomos" | "faqs" | "marca" | "rodape"> = {
+const DEFAULTS: Pick<DB, "hero" | "minis" | "difCards" | "cta" | "pontos" | "quemSomos" | "faqs" | "marca" | "rodape" | "telaLogin"> = {
   hero: {
     eyebrow: "TELEVENDAS AUTORIZADO · VIAÇÃO TOTAL",
     tituloA: "Sua viagem com a",
@@ -51,6 +53,12 @@ const DEFAULTS: Pick<DB, "hero" | "minis" | "difCards" | "cta" | "pontos" | "que
   },
   marca: { nomeA: "VIAÇÃO", nomeB: "TOTAL", subtitulo: "Televendas autorizado Viação Total", logoUrl: "" },
   rodape: { sobre: "Canal de consulta de viagens com atendimento direto pelo WhatsApp.", notaEsquerda: "© 2026 Viação Total — dados operacionais sujeitos a confirmação comercial.", notaDireita: "Fonte prioritária: viajetotal.com.br" },
+  telaLogin: {
+    titulo: "Painel da agência.",
+    subtitulo: "Gerencie passagens, destinos, horários, conteúdo do site e o WhatsApp comercial — tudo refletindo na hora, sem mexer no código.",
+    dica: "Acesso restrito · sessão protegida de 12h",
+    fundoUrl: "",
+  },
   minis: [
     { icone: "💰", titulo: "Custo Benefício" },
     { icone: "📱", titulo: "Embarque Digital" },
@@ -81,7 +89,7 @@ export function loadDB(): DB {
   const parsed = JSON.parse(raw) as Partial<DB>;
   const merged: any = { ...DEFAULTS, ...parsed };
   // Mescla nível 1 dos blocos para arquivos antigos ganharem campos novos
-  for (const k of ["hero", "marca", "rodape", "cta", "quemSomos", "settings"] as const) {
+  for (const k of ["hero", "marca", "rodape", "cta", "quemSomos", "settings", "telaLogin"] as const) {
     merged[k] = { ...(DEFAULTS as any)[k], ...((parsed as any)[k] || {}) };
   }
   return merged as DB;

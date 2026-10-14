@@ -142,6 +142,8 @@ describe("pesquisa de viagens", () => {
     expect(db.rodape.sobre).toBeDefined();
     expect(db.rodape.notaEsquerda).toBeTruthy();
     expect(db.rodape.notaDireita).toBeDefined();
+    expect(db.telaLogin.titulo).toBeTruthy();
+    expect(db.telaLogin.fundoUrl).toBeDefined();
     expect(db.minis.length).toBeGreaterThan(0);
     expect(db.difCards.length).toBeGreaterThan(0);
     expect(db.cta.titulo).toBeTruthy();
