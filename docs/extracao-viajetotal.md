@@ -104,6 +104,13 @@ NORMAL (padrão), BILHETE DE VIAGEM IDOSO 100% e demais regras da empresa.
   diária (verificado 15–18/10, mesmo horário/valor).
 - Partidas de hoje já ocorridas: flag `partiu`, exibidas desabilitadas com selo
   "JÁ PARTIU"/"Encerrada" (referência, sem WhatsApp) em vez de ocultas.
+- **Poltronas ao vivo**: `POST {gateway}/app/schedule/vehicle/configuration`
+  `{id}` (layout: fileiras/células com `seatIdentifier`, janela/corredor) +
+  `POST {gateway}/app/sale/seats/map`
+  `{IdDailyScheduleRoute, IdPartnerDailyScheduleRoute, IdPassengerType: 1,
+  IdPassengerTypeConfiguration: 1, IdSeatMapCellSelecteds: []}` (ocupação).
+  Mescla por `idSeatMapCell` (livre = status 0). Somente leitura — sem
+  pré-reserva. Nosso `GET /api/poltronas` + seletor por trecho.
 - Token: `VIAJETOTAL_API_TOKEN` (`.env.local`, fora do git) — token público do
   site oficial, só leitura, expira ~10/2027. Renovação: abrir viajetotal.com.br
   e copiar `access_token` de `localStorage AuthService_TOKEN_INFO_KEY`.
