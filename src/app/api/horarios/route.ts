@@ -4,12 +4,21 @@ import path from "path";
 import { candidatosOficiais, shapeTrips, TripOption } from "@/lib/schedules";
 
 const GATEWAY = "https://prod-motta-proxy-api-smartbus.smarttravelit.com";
-const HEADERS = {
-  "Content-Type": "application/json",
-  "IdentifierWorkstation": "306C3125-CF50-40BA-AB8B-C2C2736E1629",
-  "ProductId": "487a774c-0485-401f-84d2-61ed508becc3",
-  "IdUser": "2514",
-};
+
+// Credenciais públicas de leitura (tokens dos próprios sites oficiais):
+// Total e Motta — a busca consulta ambas e mescla as viagens.
+const CREDS = [
+  {
+    token: process.env.VIAJETOTAL_API_TOKEN || "",
+    workstation: "306C3125-CF50-40BA-AB8B-C2C2736E1629",
+    idUser: "2514",
+  },
+  {
+    token: process.env.VIAJETOTAL_API_TOKEN_MOTTA || "",
+    workstation: "C1DBA2D5-A6EC-43C4-9ED2-CD5AD765C798",
+    idUser: "1302",
+  },
+];
 
 function nomesOficiais(): Set<string> {
   try {
@@ -35,26 +44,32 @@ export async function GET(req: Request) {
   const destino = url.searchParams.get("destino") || "";
   const data = url.searchParams.get("data") || ""; // YYYY-MM-DD
   const pax = Math.min(10, Math.max(1, Number(url.searchParams.get("pax")) || 1));
-  const token = process.env.VIAJETOTAL_API_TOKEN || "";
   const oficiais = nomesOficiais();
 
   const dep = resolver(origem, oficiais);
   const arr = resolver(destino, oficiais);
   if (!dep.length || !arr.length || !/^\d{4}-\d{2}-\d{2}$/.test(data))
     return NextResponse.json({ ok: false, error: "Origem, destino ou data inválidos.", trips: [] }, { status: 400 });
-  if (!token)
+  const ativas = CREDS.filter(c => c.token);
+  if (!ativas.length)
     return NextResponse.json({ ok: false, error: "Consulta de horários indisponível no momento.", trips: [] }, { status: 503 });
 
   try {
-    const pairs: [string, string][] = [];
-    for (const d of dep) for (const a of arr) pairs.push([d, a]);
-    const results = await Promise.all(pairs.slice(0, 4).map(async ([d, a]) => {
+    const jobs: { d: string; a: string; c: (typeof CREDS)[number] }[] = [];
+    for (const d of dep) for (const a of arr) for (const c of ativas) jobs.push({ d, a, c });
+    const results = await Promise.all(jobs.slice(0, 8).map(async ({ d, a, c }) => {
       const ctrl = new AbortController();
       const timer = setTimeout(() => ctrl.abort(), 15000);
       try {
         const r = await fetch(`${GATEWAY}/app/sale/trips`, {
           method: "POST",
-          headers: { ...HEADERS, Authorization: `Bearer ${token}` },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${c.token}`,
+            IdentifierWorkstation: c.workstation,
+            ProductId: "487a774c-0485-401f-84d2-61ed508becc3",
+            IdUser: c.idUser,
+          },
           body: JSON.stringify({
             departureLocationName: d, arrivalLocationName: a, isReturn: false,
             departureDate: `${data}T12:00:00`, promoCode: null, seats: pax,
@@ -70,12 +85,12 @@ export async function GET(req: Request) {
       } catch { return []; }
       finally { clearTimeout(timer); }
     }));
-    // Deduplica por partida + pontos + CLASSE (o mesmo horário pode ter
-    // EXECUTIVO, LEITO etc. — são opções diferentes, não duplicatas).
+    // Deduplica por partida + pontos + classe + empresa (o mesmo horário pode
+    // ter EXECUTIVO, LEITO etc. e ser operado por empresas diferentes).
     const seen = new Set<string>();
     const trips: TripOption[] = [];
     for (const t of results.flat()) {
-      const k = `${t.partida}|${t.origem}|${t.destino}|${t.classe}|${t.preco}`;
+      const k = `${t.partida}|${t.origem}|${t.destino}|${t.classe}|${t.preco}|${t.empresa}`;
       if (!seen.has(k)) { seen.add(k); trips.push(t); }
     }
     trips.sort((a, b) => a.partida.localeCompare(b.partida) || a.classe.localeCompare(b.classe));

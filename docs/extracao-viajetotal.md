@@ -107,6 +107,11 @@ NORMAL (padrão), BILHETE DE VIAGEM IDOSO 100% e demais regras da empresa.
 - Token: `VIAJETOTAL_API_TOKEN` (`.env.local`, fora do git) — token público do
   site oficial, só leitura, expira ~10/2027. Renovação: abrir viajetotal.com.br
   e copiar `access_token` de `localStorage AuthService_TOKEN_INFO_KEY`.
+- **Busca dupla Total + Motta**: `VIAJETOTAL_API_TOKEN_MOTTA` (token público de
+  www.motta.com.br, workstation `C1DBA2D5-…`, IdUser 1302). Cada par de pontos é
+  consultado com as duas credenciais e mesclado (deduplica por horário + pontos
+  + classe + empresa). Ex.: Rondonópolis→Campo Grande 19/10 = 11:05 MOTTA
+  R$ 158,92 + 22:40 TOTAL R$ 149,47. Sem o token Motta, o site mostra só a Total.
 
 ## Pendente (não exposto publicamente)
 
