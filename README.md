@@ -38,6 +38,7 @@ npm test      # vitest
 npm run build && npm start
 ```
 Admin: `/admin` (usuário `ADMIN_USER`, senha com hash `ADMIN_PASS_HASH`; padrão dev admin/admin123 — trocar em produção).
+Troca pelo painel em `/admin/acesso` (exige a senha atual; salva hash SHA-256 em `data/db.json`, que prevalece sobre o env).
 Gerar hash: `node -e "console.log(require('crypto').createHash('sha256').update('SUA-SENHA').digest('hex'))"`
 
 ## Produção (PostgreSQL + Prisma)
