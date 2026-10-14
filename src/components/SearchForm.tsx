@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "@/lib/trip";
 import { TripOption, brl } from "@/lib/schedules";
+import LocalitySelect from "@/components/LocalitySelect";
 
 export default function SearchForm({ locais, whatsapp }: { locais: string[]; whatsapp: string }) {
   const origens = locais, destinos = locais;
@@ -76,14 +77,8 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
       {tab === "passagem" ? (
         <>
           <form onSubmit={buscarHorarios} className="grid gap-4 md:grid-cols-4" aria-label="Consultar passagens">
-            <div><label className="label" htmlFor="origem">Origem</label>
-              <select id="origem" className="input mt-1" value={origem} onChange={e => { setOrigem(e.target.value); resetTrips(); }}>
-                <option value="">Selecione</option>{origens.map(o => <option key={o} value={o}>{o}</option>)}
-              </select></div>
-            <div><label className="label" htmlFor="destino">Destino</label>
-              <select id="destino" className="input mt-1" value={destino} onChange={e => { setDestino(e.target.value); resetTrips(); }}>
-                <option value="">Selecione</option>{destinos.map(o => <option key={o} value={o}>{o}</option>)}
-              </select></div>
+            <LocalitySelect id="origem" label="Origem" value={origem} locais={origens} onChange={v => { setOrigem(v); resetTrips(); }} />
+            <LocalitySelect id="destino" label="Destino" value={destino} locais={destinos} onChange={v => { setDestino(v); resetTrips(); }} />
             <div><label className="label" htmlFor="data">Data</label>
               <input id="data" type="date" className="input mt-1" value={dataIda} onChange={e => { setDataIda(e.target.value); resetTrips(); }} /></div>
             <div><label className="label" htmlFor="pax">Passageiros</label>
@@ -133,14 +128,8 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
         </>
       ) : (
         <form onSubmit={orcamentoEncomenda} className="grid gap-4 md:grid-cols-4" aria-label="Orçamento de encomenda">
-          <div><label className="label" htmlFor="origem2">Origem</label>
-            <select id="origem2" className="input mt-1" value={origem} onChange={e => setOrigem(e.target.value)}>
-              <option value="">Selecione</option>{origens.map(o => <option key={o} value={o}>{o}</option>)}
-            </select></div>
-          <div><label className="label" htmlFor="destino2">Destino</label>
-            <select id="destino2" className="input mt-1" value={destino} onChange={e => setDestino(e.target.value)}>
-              <option value="">Selecione</option>{destinos.map(o => <option key={o} value={o}>{o}</option>)}
-            </select></div>
+          <LocalitySelect id="origem2" label="Origem" value={origem} locais={origens} onChange={setOrigem} />
+          <LocalitySelect id="destino2" label="Destino" value={destino} locais={destinos} onChange={setDestino} />
           <div><label className="label" htmlFor="data2">Data de envio</label>
             <input id="data2" type="date" className="input mt-1" value={dataIda} onChange={e => setDataIda(e.target.value)} /></div>
           <div><label className="label" htmlFor="desc">Conteúdo (opcional)</label>

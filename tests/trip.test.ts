@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "../src/lib/trip";
-import { candidatosOficiais, shapeTrips, brl, pontoDe } from "../src/lib/schedules";
+import { candidatosOficiais, shapeTrips, brl, pontoDe, filtrarLocais } from "../src/lib/schedules";
 
 describe("pesquisa de viagens", () => {
   it("aceita origem/destino/data válidos", () => {
@@ -49,8 +49,7 @@ describe("pesquisa de viagens", () => {
     expect(msg).toMatch(/Horário desejado: 07:00/);
     expect(msg).toMatch(/chegada prevista/);
   });
-  it("rotula pontos de embarque e não colapsa classes diferentes", () => {
-    expect(pontoDe("CAMPO GRANDE - MS (SAGITARIUS)")).toBe("Sagitarius");
+  it("rotula pontos de embarque e não colapsa classes diferentes", () => {    expect(pontoDe("CAMPO GRANDE - MS (SAGITARIUS)")).toBe("Sagitarius");
     expect(pontoDe("CUIABA - MT ( TERMINAL RODOVIARIO )")).toBe("Terminal Rodoviário");
     expect(pontoDe("RECIFE - PE")).toBe("Ponto principal");
     const raw = { trips: [
@@ -60,5 +59,15 @@ describe("pesquisa de viagens", () => {
     const trips = shapeTrips(raw, "2026-12-01");
     expect(trips.length).toBe(2);
     expect(trips.map(t => t.classe).sort()).toEqual(["EXECUTIVO", "LEITO"]);
+  });
+  it("filtra localidades sem ofuscar: populares primeiro, limite respeitado", () => {
+    const todas = ["CUIABA - MT ( TERMINAL RODOVIARIO )", "CUIABA (COXIPO) - MT", "CAMPO GRANDE - MS ( TERMINAL RODOVIARIO )", "RECIFE - PE"];
+    const pop = ["CAMPO GRANDE - MS ( TERMINAL RODOVIARIO )"];
+    expect(filtrarLocais("", todas, pop)).toEqual(["CAMPO GRANDE - MS ( TERMINAL RODOVIARIO )"]);
+    const r = filtrarLocais("cuiaba", todas, pop);
+    expect(r.length).toBe(2);
+    expect(filtrarLocais("zzz", todas, pop)).toEqual([]);
+    const muitas = Array.from({ length: 50 }, (_, i) => `CID${i} - MS`);
+    expect(filtrarLocais("cid", muitas, []).length).toBeLessThanOrEqual(30);
   });
 });

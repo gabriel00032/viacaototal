@@ -95,3 +95,25 @@ export function brl(v: number | null): string {
   if (v === null) return "a confirmar";
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
+
+// Busca de localidades: ignora acentos/maiúsculas, prioriza os pontos
+// populares e depois prefixos; limita para não ofuscar a tela.
+export function filtrarLocais(query: string, todas: string[], populares: string[], limite = 30): string[] {
+  const q = norm(query);
+  if (!q) return populares.filter(p => todas.includes(p));
+  const starts: string[] = [];
+  const contains: string[] = [];
+  for (const n of todas) {
+    const nn = norm(n);
+    if (nn === q || nn.startsWith(q)) starts.push(n);
+    else if (nn.includes(q)) contains.push(n);
+    if (starts.length >= limite) break;
+  }
+  const popFirst = (a: string, b: string) => {
+    const ia = populares.indexOf(a), ib = populares.indexOf(b);
+    return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+  };
+  starts.sort(popFirst);
+  contains.sort(popFirst);
+  return [...starts, ...contains].slice(0, limite);
+}
