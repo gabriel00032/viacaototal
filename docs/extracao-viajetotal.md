@@ -90,6 +90,12 @@ NORMAL (padrão), BILHETE DE VIAGEM IDOSO 100% e demais regras da empresa.
   (com `null` a API devolve menos viagens ou nenhuma — ex.: Cuiabá→Campo Grande
   com nomes formatados: `null` → 0, array → 2), `seats` = nº de passageiros.
   Viagens com `isConnection: true` exibem selo "COM CONEXÃO" e linha na mensagem.
+- Modelo confirmado no bundle: `tripType` 1=route (direto), 2=connection, 3=open
+  (`tripKey.tripType`). Conexões são detectadas por `tripKey.tripType === 2` ou
+  `isConnection`, e o percurso é montado de `routes[]` trecho a trecho somente
+  com campos presentes (nomes/horários por trecho). Diretas têm 1 trecho e não
+  exibem selo. Em ~25 pares/datas sondados a API não retornou conexões — quando
+  retornar, o site já as especifica com o percurso até o destino final.
 - Token: `VIAJETOTAL_API_TOKEN` (`.env.local`, fora do git) — token público do
   site oficial, só leitura, expira ~10/2027. Renovação: abrir viajetotal.com.br
   e copiar `access_token` de `localStorage AuthService_TOKEN_INFO_KEY`.
