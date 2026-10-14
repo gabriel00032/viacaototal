@@ -52,8 +52,30 @@ export function candidatosOficiais(cidadeSimplificada: string): string[] {
   return CANDIDATOS[key] || [];
 }
 
-// Horário a partir de string ISO ou do objeto {hour, minute} da API
-// (usa os campos de parede hour/minute, sem conversão de fuso).
+// Data local (do servidor) em YYYY-MM-DD — nunca UTC, para não virar o dia
+// antes da meia-noite local.
+export function hojeLocal(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+// Instante real da partida: o horário da API é de parede na cidade de origem;
+// `offset` (ex: -240) converte para UTC. Sem offset, usa comparação local.
+function instantePartida(isoOuObj: any, offsetMin: number | null, dataISO: string): number | null {
+  let y = 0, mo = 0, dd = 0, h = 0, mi = 0;
+  const v = isoOuObj;
+  if (typeof v === "string") {
+    const d = new Date(v);
+    if (isNaN(d.getTime())) return null;
+    y = d.getFullYear(); mo = d.getMonth(); dd = d.getDate(); h = d.getHours(); mi = d.getMinutes();
+  } else if (v && typeof v.hour === "number") {
+    const parts = dataISO.split("-").map(Number);
+    y = parts[0]; mo = parts[1] - 1; dd = parts[2]; h = v.hour; mi = v.minute || 0;
+  } else return null;
+  if (typeof offsetMin === "number" && isFinite(offsetMin))
+    return Date.UTC(y, mo, dd, h, mi) - offsetMin * 60000;
+  return null;
+}
 export function horaDe(v: any): string | null {
   if (typeof v === "string") {
     const d = new Date(v);
@@ -127,8 +149,8 @@ export function extrairTrechos(t: any): Trecho[] {
 
 export function shapeTrips(raw: any, dataISO: string): TripOption[] {
   const list: TripOption[] = [];
-  const hoje = new Date().toISOString().slice(0, 10);
-  const agora = new Date();
+  const agora = Date.now();
+  const hoje = hojeLocal();
   for (const t of raw?.trips || []) {
     if (!t?.departureDateTime) continue;
     const conexao = t.tripKey?.tripType === 2 || Boolean(t.isConnection);
@@ -153,10 +175,15 @@ export function shapeTrips(raw: any, dataISO: string): TripOption[] {
       diasDepois: Number(t.departureArrivalDiffDays ?? 0) || 0,
       partiu: false,
     };
-    if (dataISO === hoje) {
-      const [h, m] = out.partida.split(":").map(Number);
-      const d = new Date(); d.setHours(h, m, 0, 0);
-      out.partiu = d.getTime() <= agora.getTime();
+    // Compara o instante real (fuso da cidade de partida) com agora — nunca
+    // compara horário de parede com relógio de outro fuso.
+    const off = typeof t.departureDateTimeOffset === "number" ? t.departureDateTimeOffset : null;
+    const inst = instantePartida(t.departureDateTime, off, dataISO);
+    if (inst !== null) out.partiu = inst <= agora;
+    else if (dataISO === hoje) {
+      const [hh, mm] = out.partida.split(":").map(Number);
+      const dd = new Date(); dd.setHours(hh, mm, 0, 0);
+      out.partiu = dd.getTime() <= agora;
     }
     list.push(out);
   }

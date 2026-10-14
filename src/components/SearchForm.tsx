@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "@/lib/trip";
-import { TripOption, brl, linhaPercurso } from "@/lib/schedules";
+import { TripOption, brl, linhaPercurso, hojeLocal } from "@/lib/schedules";
 import LocalitySelect from "@/components/LocalitySelect";
 
 export default function SearchForm({ locais, whatsapp }: { locais: string[]; whatsapp: string }) {
@@ -18,7 +18,7 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
   const [trips, setTrips] = useState<TripOption[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [tripsError, setTripsError] = useState("");
-  const hojeISO = new Date().toISOString().slice(0, 10);
+  const hojeISO = hojeLocal();
   const dataPassada = !!dataIda && dataIda < hojeISO;
 
   function resetTrips() { setTrips(null); setTripsError(""); setLink(null); }

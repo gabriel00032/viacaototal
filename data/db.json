@@ -15,8 +15,8 @@
   },
   "rodape": {
     "sobre": "Canal de consulta de viagens com atendimento direto pelo WhatsApp.",
-    "notaEsquerda": "© 2026 Viação Total — dados operacionais sujeitos a confirmação comercial.",
-    "notaDireita": "Fonte prioritária: viajetotal.com.br"
+    "notaEsquerda": "© 2026 AM VIAGENS E TURISMO — Todos os direitos Reservados.",
+    "notaDireita": "viajetotal.com.br"
   },
   "minis": [
     {
@@ -115,7 +115,7 @@
     "sac": "0800 085 8080",
     "email": "sac@viajetotal.com.br",
     "atendimento": "SAC 24h | Comercial 08h às 18h, segunda a sexta",
-    "endereco": "Rua Santa Clara, Nº 1007, Sala 01, Mário Andreazza, Bayeux - PB, CEP 58.309-614"
+    "endereco": "R. Trinta e Um de Dezembro - Jardim Belo Horizonte, Rondonópolis - MT, 78705-490"
   },
   "destinations": [
     {
@@ -285,7 +285,7 @@
   "clicks": [
     {
       "rota": "RONDONOPOLIS - MT ( TERMINAL RODOVIARIO ) → CAMPO GRANDE - MS ( TERMINAL RODOVIARIO ) 22:40",
-      "total": 1
+      "total": 2
     }
   ]
 }

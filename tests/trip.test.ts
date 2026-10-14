@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "../src/lib/trip";
-import { candidatosOficiais, shapeTrips, brl, pontoDe, filtrarLocais, extrairTrechos, curto, linhaPercurso } from "../src/lib/schedules";
+import { candidatosOficiais, shapeTrips, brl, pontoDe, filtrarLocais, extrairTrechos, curto, linhaPercurso, hojeLocal } from "../src/lib/schedules";
 import { loadDB } from "../src/lib/store";
 
 describe("pesquisa de viagens", () => {
@@ -109,12 +109,25 @@ describe("pesquisa de viagens", () => {
     ]);
     expect(linha).toBe("Rondonopolis (11:05) → Campo Grande (19:15) → Sao Paulo (12:35)");
   });
-  it("marca partidas de hoje já ocorridas como 'partiu' em vez de ocultar", () => {    const hoje = new Date().toISOString().slice(0, 10);
+  it("marca partidas de hoje já ocorridas como 'partiu' em vez de ocultar", () => {
+    const hoje = hojeLocal();
     const raw = { trips: [
-      { departureDateTime: `${hoje}T00:01:00`, arrivalDateTime: `${hoje}T12:00:00`, duration: { hours: 11, minutes: 59 }, classOfServiceName: "EXECUTIVO", availableSeats: 1, price: 100, departureLocationName: "A", arrivalLocationName: "B" },
+      { departureDateTime: `${hoje}T00:01:00`, departureDateTimeOffset: -240, arrivalDateTime: `${hoje}T12:00:00`, duration: { hours: 11, minutes: 59 }, classOfServiceName: "EXECUTIVO", availableSeats: 1, price: 100, departureLocationName: "A", arrivalLocationName: "B" },
     ]};
     const [t] = shapeTrips(raw, hoje);
     expect(t.partiu).toBe(true);
+  });
+  it("não marca 'partiu' para partida futura no fuso da cidade", () => {
+    // 23:00 em UTC-4 equivale a 03:00Z do dia seguinte: ainda é futuro se agora < isso.
+    // Usa offset explícito para não depender do fuso do servidor.
+    const agora = Date.now();
+    const futuro = new Date(agora + 4 * 3600 * 1000);
+    const iso = `${futuro.getFullYear()}-${String(futuro.getMonth() + 1).padStart(2, "0")}-${String(futuro.getDate()).padStart(2, "0")}T${String(futuro.getHours()).padStart(2, "0")}:${String(futuro.getMinutes()).padStart(2, "0")}:00`;
+    const raw = { trips: [
+      { departureDateTime: iso, departureDateTimeOffset: -240, arrivalDateTime: iso, duration: { hours: 2, minutes: 0 }, classOfServiceName: "EXECUTIVO", availableSeats: 1, price: 100, departureLocationName: "A", arrivalLocationName: "B" },
+    ]};
+    const [t] = shapeTrips(raw, iso.slice(0, 10));
+    expect(t.partiu).toBe(false);
   });
   it("banco possui todas as seções editáveis pelo admin", () => {
     const db = loadDB();
@@ -122,7 +135,7 @@ describe("pesquisa de viagens", () => {
     expect(db.hero.fundoUrl).toBeDefined();
     expect(db.marca.nomeB).toBeTruthy();
     expect(db.rodape.sobre).toBeDefined();
-    expect(db.rodape.notaEsquerda).toMatch(/Viação Total/);
+    expect(db.rodape.notaEsquerda).toBeTruthy();
     expect(db.rodape.notaDireita).toBeDefined();
     expect(db.minis.length).toBeGreaterThan(0);
     expect(db.difCards.length).toBeGreaterThan(0);
