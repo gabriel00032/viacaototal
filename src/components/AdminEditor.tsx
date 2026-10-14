@@ -107,7 +107,9 @@ export default function AdminEditor({ campo, campos }: { campo: Campo; campos?: 
               <p className="text-xs text-slate-500">Sem imagem, o site exibe o nome em texto. Com imagem, ela aparece no cabeçalho e no rodapé.</p>
             </>)}
             {c === "rodape" && (<>
-              <Area label="Texto institucional do rodapé" value={db.rodape.sobre} rows={3} onChange={(v: string) => set({ rodape: { sobre: v } })} />
+              <Area label="Texto institucional do rodapé" value={db.rodape.sobre} rows={3} onChange={(v: string) => set({ rodape: { ...db.rodape, sobre: v } })} />
+              <Txt label="Barra inferior — texto da esquerda" value={db.rodape.notaEsquerda} onChange={(v: string) => set({ rodape: { ...db.rodape, notaEsquerda: v } })} />
+              <Txt label="Barra inferior — texto da direita" value={db.rodape.notaDireita} onChange={(v: string) => set({ rodape: { ...db.rodape, notaDireita: v } })} />
               <Txt label="Endereço" value={db.settings.endereco} onChange={(v: string) => set({ settings: { ...db.settings, endereco: v } })} />
               <div className="grid sm:grid-cols-3 gap-3">
                 <Txt label="SAC" value={db.settings.sac} onChange={(v: string) => set({ settings: { ...db.settings, sac: v } })} />

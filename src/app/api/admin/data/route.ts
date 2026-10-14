@@ -76,7 +76,7 @@ export async function PUT(req: Request) {
       logoUrl: str(body.marca.logoUrl, 500),
     };
   }
-  if (body.rodape) db.rodape = { sobre: str(body.rodape.sobre, 500) };
+  if (body.rodape) db.rodape = { sobre: str(body.rodape.sobre, 500), notaEsquerda: str(body.rodape.notaEsquerda, 200), notaDireita: str(body.rodape.notaDireita, 200) };
   if (Array.isArray(body.minis)) {
     db.minis = body.minis.slice(0, 12).map((m: any) => ({ icone: str(m.icone, 8), titulo: str(m.titulo, 60) })).filter((m: any) => m.titulo);
   }

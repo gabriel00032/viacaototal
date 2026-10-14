@@ -49,8 +49,8 @@ export default function Footer() {
       </div>
       <div className="border-t border-white/10">
         <div className="container-vt py-4 flex flex-col sm:flex-row justify-between text-xs text-white/60">
-          <span>© 2026 Viação Total — dados operacionais sujeitos a confirmação comercial.</span>
-          <span>Fonte prioritária: viajetotal.com.br</span>
+          <span>{db.rodape?.notaEsquerda || ""}</span>
+          <span>{db.rodape?.notaDireita || ""}</span>
         </div>
       </div>
     </footer>

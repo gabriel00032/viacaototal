@@ -23,7 +23,7 @@ export interface DifCard { titulo: string; destaque: string; texto: string; }
 export interface Ponto { nome: string; endereco: string; horario: string; telefone: string; mapa: string; }
 export interface Faq { q: string; a: string; }
 export interface Marca { nomeA: string; nomeB: string; subtitulo: string; logoUrl: string; }
-export interface Rodape { sobre: string; }
+export interface Rodape { sobre: string; notaEsquerda: string; notaDireita: string; }
 export interface DB {
   featured: FeaturedTrip[]; destinations: Destination[];
   schedules: Schedule[]; settings: Settings; clicks: { rota: string; total: number }[];
@@ -50,7 +50,7 @@ const DEFAULTS: Pick<DB, "hero" | "minis" | "difCards" | "cta" | "pontos" | "que
     fundoUrl: "",
   },
   marca: { nomeA: "VIAÇÃO", nomeB: "TOTAL", subtitulo: "Televendas autorizado Viação Total", logoUrl: "" },
-  rodape: { sobre: "Canal de consulta de viagens com atendimento direto pelo WhatsApp." },
+  rodape: { sobre: "Canal de consulta de viagens com atendimento direto pelo WhatsApp.", notaEsquerda: "© 2026 Viação Total — dados operacionais sujeitos a confirmação comercial.", notaDireita: "Fonte prioritária: viajetotal.com.br" },
   minis: [
     { icone: "💰", titulo: "Custo Benefício" },
     { icone: "📱", titulo: "Embarque Digital" },

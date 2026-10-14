@@ -8,13 +8,15 @@
     "fundoUrl": "/uploads/1791941490296-fe9a44d469c5.jpg"
   },
   "marca": {
-    "nomeA": "VIAÇÃO",
-    "nomeB": "TOTAL",
+    "nomeA": "AM",
+    "nomeB": "VIAGENS E TURISMO",
     "subtitulo": "Televendas autorizado Viação Total",
     "logoUrl": ""
   },
   "rodape": {
-    "sobre": "Canal de consulta de viagens com atendimento direto pelo WhatsApp."
+    "sobre": "Canal de consulta de viagens com atendimento direto pelo WhatsApp.",
+    "notaEsquerda": "© 2026 Viação Total — dados operacionais sujeitos a confirmação comercial.",
+    "notaDireita": "Fonte prioritária: viajetotal.com.br"
   },
   "minis": [
     {

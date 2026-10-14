@@ -122,6 +122,8 @@ describe("pesquisa de viagens", () => {
     expect(db.hero.fundoUrl).toBeDefined();
     expect(db.marca.nomeB).toBeTruthy();
     expect(db.rodape.sobre).toBeDefined();
+    expect(db.rodape.notaEsquerda).toMatch(/Viação Total/);
+    expect(db.rodape.notaDireita).toBeDefined();
     expect(db.minis.length).toBeGreaterThan(0);
     expect(db.difCards.length).toBeGreaterThan(0);
     expect(db.cta.titulo).toBeTruthy();
