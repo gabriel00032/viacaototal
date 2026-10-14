@@ -291,12 +291,12 @@
   "clicks": [
     {
       "rota": "RONDONOPOLIS - MT ( TERMINAL RODOVIARIO ) → CAMPO GRANDE - MS ( TERMINAL RODOVIARIO ) 22:40",
-      "total": 2
+      "total": 3
     }
   ],
   "adminCreds": {
-    "user": "admin",
-    "passHash": "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
-    "updatedAt": "2026-10-14T02:48:38.482Z"
+    "user": "gabrielmota",
+    "passHash": "2b705cdda2928fe2d8cefffba3cb61d2a720a05aa15fccbb88f29c0da4975dce",
+    "updatedAt": "2026-10-14T03:02:18.225Z"
   }
 }

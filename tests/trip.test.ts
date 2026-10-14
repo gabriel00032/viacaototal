@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "../src/lib/trip";
-import { candidatosOficiais, shapeTrips, brl, pontoDe, filtrarLocais, extrairTrechos, curto, linhaPercurso, hojeLocal, logoEmpresa } from "../src/lib/schedules";
+import { candidatosOficiais, shapeTrips, brl, pontoDe, filtrarLocais, extrairTrechos, curto, linhaPercurso, hojeLocal, logoEmpresa, mergeMapa, extrairPernas } from "../src/lib/schedules";
 import { loadDB } from "../src/lib/store";
 import fs from "fs";
 import path from "path";
@@ -154,8 +154,29 @@ describe("pesquisa de viagens", () => {
     expect(db.faqs.length).toBeGreaterThan(0);
     expect(Array.isArray(db.schedules)).toBe(true);
   });
-  it("PWA instalável: manifest, ícones e service worker presentes", () => {
-    const pub = path.join(process.cwd(), "public");
+  it("extrai pernas com ids e mescla layout com ocupação sem reservar", () => {
+    const raw = { routes: [
+      { idDailyScheduleRoute: 10, idPartnerDailyScheduleRoute: 0, idVehicleConfiguration: 177, departureLocationName: "A", arrivalLocationName: "B" },
+      { idDailyScheduleRoute: 0, departureLocationName: "X" },
+    ]};
+    const pernas = extrairPernas(raw);
+    expect(pernas.length).toBe(1);
+    expect(pernas[0]).toMatchObject({ rotaId: 10, veiculoId: 177 });
+    const layout = { vehicleConfiguration: { rows: [
+      { cells: [
+        { idSeatMapCell: 1, seatIdentifier: "1", isSeat: true, isWindow: true, isAisle: false, status: 0 },
+        { idSeatMapCell: 2, seatIdentifier: "2", isSeat: true, isWindow: false, isAisle: false, status: 0 },
+        { idSeatMapCell: 9, seatIdentifier: "", isSeat: false, status: 0 },
+      ]},
+    ]}};
+    const rows = mergeMapa(layout, { seatsStatus: [{ idSeatMapCell: 2, status: 5 }] });
+    expect(rows.length).toBe(1);
+    expect(rows[0].cells.length).toBe(3);
+    expect(rows[0].cells[0]).toMatchObject({ numero: "1", livre: true, janela: true, vazio: false });
+    expect(rows[0].cells[1]).toMatchObject({ numero: "2", livre: false });
+    expect(rows[0].cells[2].vazio).toBe(true);
+  });
+  it("PWA instalável: manifest, ícones e service worker presentes", () => {    const pub = path.join(process.cwd(), "public");
     const man = JSON.parse(fs.readFileSync(path.join(pub, "manifest.webmanifest"), "utf-8"));
     expect(man.display).toBe("standalone");
     expect(man.start_url).toBe("/");

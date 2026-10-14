@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "@/lib/trip";
-import { TripOption, brl, linhaPercurso, hojeLocal } from "@/lib/schedules";
+import { TripOption, brl, linhaPercurso, hojeLocal, curto } from "@/lib/schedules";
 import LocalitySelect from "@/components/LocalitySelect";
+import SeatMap from "@/components/SeatMap";
 
 export default function SearchForm({ locais, whatsapp }: { locais: string[]; whatsapp: string }) {
   const origens = locais, destinos = locais;
@@ -18,10 +19,12 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
   const [trips, setTrips] = useState<TripOption[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [tripsError, setTripsError] = useState("");
+  // Etapa 3: poltronas por trecho
+  const [seatStep, setSeatStep] = useState<{ trip: TripOption; leg: number; escolhidas: string[][] } | null>(null);
   const hojeISO = hojeLocal();
   const dataPassada = !!dataIda && dataIda < hojeISO;
 
-  function resetTrips() { setTrips(null); setTripsError(""); setLink(null); }
+  function resetTrips() { setTrips(null); setTripsError(""); setLink(null); setSeatStep(null); }
 
   async function buscarHorarios(e: React.FormEvent) {
     e.preventDefault();
@@ -40,6 +43,14 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
   }
 
   function escolherHorario(t: TripOption) {
+    const uteis = (t.pernas || []).filter(p => p.rotaId && p.veiculoId);
+    if (uteis.length) { setSeatStep({ trip: t, leg: 0, escolhidas: uteis.map(() => []) }); return; }
+    finalizarWhats(t, []);
+  }
+
+  function finalizarWhats(t: TripOption, porTrecho: string[][]) {
+    const uteis = (t.pernas || []).filter(p => p.rotaId && p.veiculoId);
+    const flat = porTrecho.flat();
     const percurso = t.trechos.length
       ? t.trechos.map((s, i) =>
           `Trecho ${i + 1}: ${s.origem || "?"}${s.partida ? ` (${s.partida})` : ""} → ${s.destino || "?"}${s.chegada ? ` (${s.chegada})` : ""}${s.linha ? ` [${s.linha}]` : ""}`
@@ -53,6 +64,11 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
       ...(t.plataforma ? [`Plataforma indicada: ${t.plataforma}`] : []),
       ...(t.conexao ? ["Viagem COM CONEXÃO (troca de ônibus no trajeto)"] : []),
       ...(percurso ? [`Percurso até o destino final:\n${percurso}`] : []),
+      ...(flat.length
+        ? (uteis.length > 1
+          ? [`Poltronas por trecho:\n${uteis.map((p, i) => `Trecho ${i + 1} (${curto(p.origem)}→${curto(p.destino)}): ${porTrecho[i]?.join(", ") || "a confirmar"}`).join("\n")}`]
+          : [`Poltronas: ${flat.join(", ")}`])
+        : []),
       ...(t.preco !== null ? [`Valor visto no site: ${brl(t.preco)} (sujeito a confirmação)`] : []),
     ];
     const msg = buildWhatsMessage({ origem, destino, dataIda, horario: t.partida, passageiros, tipo: "ida", detalhes });
@@ -151,6 +167,26 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
               </div>
             </div>
           )}
+
+          {seatStep && (() => {
+            const uteis = (seatStep.trip.pernas || []).filter(p => p.rotaId && p.veiculoId);
+            const perna = uteis[seatStep.leg];
+            if (!perna) return null;
+            return (
+              <SeatMap
+                rotaId={perna.rotaId} parceiroId={perna.parceiroId} veiculoId={perna.veiculoId}
+                cred={seatStep.trip.cred} max={passageiros}
+                titulo={uteis.length > 1 ? `Trecho ${seatStep.leg + 1} de ${uteis.length}: ${curto(perna.origem)} → ${curto(perna.destino)} (${seatStep.trip.partida})` : `Escolha a poltrona (${seatStep.trip.partida} · ${seatStep.trip.classe})`}
+                onVoltar={() => setSeatStep(null)}
+                onConfirm={(pols) => {
+                  const esc = [...seatStep.escolhidas];
+                  esc[seatStep.leg] = pols;
+                  if (seatStep.leg + 1 < uteis.length) setSeatStep({ ...seatStep, leg: seatStep.leg + 1, escolhidas: esc });
+                  else { setSeatStep(null); finalizarWhats(seatStep.trip, esc); }
+                }}
+              />
+            );
+          })()}
 
           {trips !== null && trips.length === 0 && (
             <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm" aria-live="polite">

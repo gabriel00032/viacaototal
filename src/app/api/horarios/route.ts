@@ -81,7 +81,9 @@ export async function GET(req: Request) {
           signal: ctrl.signal,
         });
         if (!r.ok) return [];
-        return shapeTrips(await r.json(), data);
+        const batch = shapeTrips(await r.json(), data);
+        batch.forEach(t => { t.cred = (c.workstation.startsWith("C1DBA") ? "motta" : "total") as "total" | "motta"; });
+        return batch;
       } catch { return []; }
       finally { clearTimeout(timer); }
     }));

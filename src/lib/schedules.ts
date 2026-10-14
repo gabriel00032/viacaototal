@@ -8,6 +8,14 @@ export interface Trecho {
   chegada: string | null;
   linha: string | null;    // ex: "CAMPO GRANDE(MS) - SAO PAULO(SP)"
 }
+export interface Perna {
+  rotaId: number; parceiroId: number; veiculoId: number;
+  origem: string | null; destino: string | null;
+}
+export interface SeatCell {
+  id: number; numero: string; janela: boolean; corredor: boolean; livre: boolean; vazio: boolean;
+}
+export interface SeatRow { cells: SeatCell[]; }
 
 export interface TripOption {
   partida: string;   // "07:00"
@@ -28,6 +36,8 @@ export interface TripOption {
   logoEmpresa: string | null; // caminho do logotipo oficial da empresa
   diasDepois: number;        // 0 = chega no mesmo dia; 1+ = chega dia(s) depois
   partiu: boolean;           // true quando a partida já ocorreu (exibida desabilitada)
+  cred: "total" | "motta";   // qual credencial retornou a viagem (para o mapa de assentos)
+  pernas: Perna[];           // ids por trecho para buscar o mapa de poltronas
 }
 
 // Candidatos oficiais (nomes exatos da API) por cidade simplificada.
@@ -160,6 +170,53 @@ export function extrairTrechos(t: any): Trecho[] {
   return out;
 }
 
+// Ids por trecho (routes[]) para o mapa de poltronas.
+export function extrairPernas(t: any): Perna[] {
+  const legs = Array.isArray(t?.routes) ? t.routes : [];
+  const out: Perna[] = [];
+  for (const leg of legs) {
+    const rotaId = Number(leg?.idDailyScheduleRoute ?? 0);
+    if (!rotaId) continue;
+    out.push({
+      rotaId,
+      parceiroId: Number(leg?.idPartnerDailyScheduleRoute ?? 0),
+      veiculoId: Number(leg?.idVehicleConfiguration ?? 0),
+      origem: typeof leg?.departureLocationName === "string" ? leg.departureLocationName : null,
+      destino: typeof leg?.arrivalLocationName === "string" ? leg.arrivalLocationName : null,
+    });
+  }
+  return out;
+}
+
+// Mescla layout do veículo com ocupação ao vivo: livre = status 0 e fora da
+// lista de ocupadas. Somente leitura — não reserva nada.
+export function mergeMapa(layout: any, ocupacao: any): SeatRow[] {
+  const status = new Map<number, number>();
+  for (const s of ocupacao?.seatsStatus || []) {
+    if (typeof s?.idSeatMapCell === "number") status.set(s.idSeatMapCell, Number(s.status ?? 0));
+  }
+  const rows: SeatRow[] = [];
+  for (const r of layout?.vehicleConfiguration?.rows || []) {
+    const cells: SeatCell[] = [];
+    let temAssento = false;
+    for (const c of r?.cells || []) {
+      if (!c?.isSeat) { cells.push({ id: 0, numero: "", janela: false, corredor: true, livre: false, vazio: true }); continue; }
+      temAssento = true;
+      const st = status.has(c.idSeatMapCell) ? status.get(c.idSeatMapCell)! : Number(c.status ?? 0);
+      cells.push({
+        id: c.idSeatMapCell,
+        numero: String(c.seatIdentifier ?? ""),
+        janela: Boolean(c.isWindow),
+        corredor: Boolean(c.isAisle),
+        livre: st === 0,
+        vazio: false,
+      });
+    }
+    if (temAssento) rows.push({ cells });
+  }
+  return rows;
+}
+
 export function shapeTrips(raw: any, dataISO: string): TripOption[] {
   const list: TripOption[] = [];
   const agora = Date.now();
@@ -188,6 +245,8 @@ export function shapeTrips(raw: any, dataISO: string): TripOption[] {
       logoEmpresa: logoEmpresa(typeof t.companyName === "string" ? t.companyName : null),
       diasDepois: Number(t.departureArrivalDiffDays ?? 0) || 0,
       partiu: false,
+      cred: "total",
+      pernas: extrairPernas(t),
     };
     // Compara o instante real (fuso da cidade de partida) com agora — nunca
     // compara horário de parede com relógio de outro fuso.
