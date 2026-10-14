@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "../src/lib/trip";
-import { candidatosOficiais, shapeTrips, brl, pontoDe, filtrarLocais } from "../src/lib/schedules";
+import { candidatosOficiais, shapeTrips, brl, pontoDe, filtrarLocais, extrairTrechos } from "../src/lib/schedules";
 
 describe("pesquisa de viagens", () => {
   it("aceita origem/destino/data válidos", () => {
@@ -69,5 +69,25 @@ describe("pesquisa de viagens", () => {
     expect(filtrarLocais("zzz", todas, pop)).toEqual([]);
     const muitas = Array.from({ length: 50 }, (_, i) => `CID${i} - MS`);
     expect(filtrarLocais("cid", muitas, []).length).toBeLessThanOrEqual(30);
+  });
+  it("detecta conexão (tripType 2) e extrai o percurso trecho a trecho", () => {
+    const conn = {
+      departureDateTime: "2026-12-01T08:00:00", arrivalDateTime: "2026-12-01T20:00:00",
+      duration: { hours: 12, minutes: 0 }, classOfServiceName: "CONVENCIONAL",
+      availableSeats: 10, price: 200, departureLocationName: "A", arrivalLocationName: "C",
+      tripKey: { tripType: 2 },
+      routes: [
+        { departureLocationName: "A", arrivalLocationName: "B", departureDateTime: "2026-12-01T08:00:00", arrivalDateTime: "2026-12-01T12:00:00" },
+        { departureLocationName: "B", arrivalLocationName: "C", departureDateTime: "2026-12-01T14:00:00", arrivalDateTime: "2026-12-01T20:00:00" },
+      ],
+    };
+    const [c] = shapeTrips({ trips: [conn] }, "2026-12-01");
+    expect(c.conexao).toBe(true);
+    expect(c.trechos.length).toBe(2);
+    expect(c.trechos[0]).toMatchObject({ origem: "A", destino: "B", partida: "08:00", chegada: "12:00" });
+    expect(c.trechos[1]).toMatchObject({ origem: "B", destino: "C", partida: "14:00", chegada: "20:00" });
+    expect(extrairTrechos({ routes: [{ tripKey: {} }] })).toEqual([]);
+    const msg = buildWhatsMessage({ origem: "A", destino: "C", dataIda: "2026-12-01", horario: "08:00", tipo: "ida", detalhes: ["Viagem COM CONEXÃO (troca de ônibus no trajeto)"] });
+    expect(msg).toMatch(/COM CONEXÃO/);
   });
 });

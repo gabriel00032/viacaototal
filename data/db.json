@@ -191,6 +191,10 @@
     {
       "rota": "RONDONOPOLIS - MT ( TERMINAL RODOVIARIO ) → LONDRINA - PR ( TERMINAL RODOVIARIO ) 11:05",
       "total": 1
+    },
+    {
+      "rota": "RONDONOPOLIS - MT ( TERMINAL RODOVIARIO ) → SAO PAULO-SP (TERMINAL RODOVIARIO BARRA FUNDA) 11:05",
+      "total": 1
     }
   ]
 }

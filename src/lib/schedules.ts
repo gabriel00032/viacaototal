@@ -1,6 +1,13 @@
 // Integração de horários em tempo real (API pública do site oficial).
 // Somente leitura. Nenhum dado é inventado: o que aparece veio da API.
 
+export interface Trecho {
+  origem: string | null;
+  destino: string | null;
+  partida: string | null;  // "07:00"
+  chegada: string | null;
+}
+
 export interface TripOption {
   partida: string;   // "07:00"
   chegada: string;   // "19:15"
@@ -14,6 +21,7 @@ export interface TripOption {
   pontoOrigem: string;  // rótulo curto do ponto (ex: "Terminal Rodoviário", "Coxipó")
   pontoDestino: string;
   conexao: boolean;  // true quando a API indica trecho com conexão/troca de ônibus
+  trechos: Trecho[]; // percurso trecho a trecho até o destino final (quando informado)
 }
 
 // Candidatos oficiais (nomes exatos da API) por cidade simplificada.
@@ -58,10 +66,33 @@ export function pontoDe(nomeOficial: string): string {
   return "Ponto principal";
 }
 
+// Extrai o percurso trecho a trecho de `routes[]` (viagens com conexão).
+// Só usa campos efetivamente presentes — nunca inventa nomes ou horários.
+export function extrairTrechos(t: any): Trecho[] {
+  const legs = Array.isArray(t?.routes) ? t.routes : [];
+  const out: Trecho[] = [];
+  for (const leg of legs) {
+    const o = leg?.departureLocationName ?? leg?.departureName ?? leg?.origin ?? null;
+    const d = leg?.arrivalLocationName ?? leg?.arrivalName ?? leg?.destination ?? null;
+    const dt = leg?.departureDateTime ?? leg?.departure ?? null;
+    const at = leg?.arrivalDateTime ?? leg?.arrival ?? null;
+    if (o || d) {
+      out.push({
+        origem: typeof o === "string" ? o : null,
+        destino: typeof d === "string" ? d : null,
+        partida: typeof dt === "string" ? fmtHora(dt) : null,
+        chegada: typeof at === "string" ? fmtHora(at) : null,
+      });
+    }
+  }
+  return out;
+}
+
 export function shapeTrips(raw: any, dataISO: string): TripOption[] {
   const list: TripOption[] = [];
   for (const t of raw?.trips || []) {
     if (!t?.departureDateTime) continue;
+    const conexao = t.tripKey?.tripType === 2 || Boolean(t.isConnection);
     const out: TripOption = {
       partida: fmtHora(t.departureDateTime),
       chegada: t.arrivalDateTime ? fmtHora(t.arrivalDateTime) : "--:--",
@@ -76,7 +107,8 @@ export function shapeTrips(raw: any, dataISO: string): TripOption[] {
       destino: t.arrivalLocationName || "",
       pontoOrigem: pontoDe(t.departureLocationName || ""),
       pontoDestino: pontoDe(t.arrivalLocationName || ""),
-      conexao: Boolean(t.isConnection),
+      conexao,
+      trechos: extrairTrechos(t),
     };
     list.push(out);
   }

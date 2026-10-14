@@ -38,11 +38,17 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
   }
 
   function escolherHorario(t: TripOption) {
+    const percurso = t.trechos.length
+      ? t.trechos.map((s, i) =>
+          `Trecho ${i + 1}: ${s.origem || "?"}${s.partida ? ` (${s.partida})` : ""} → ${s.destino || "?"}${s.chegada ? ` (${s.chegada})` : ""}`
+        ).join("\n")
+      : null;
     const detalhes = [
       `Horário: ${t.partida} (chegada prevista ${t.chegada}, ${t.classe})`,
       `Embarque: ${t.origem}`,
       `Desembarque: ${t.destino}`,
-      ...(t.conexao ? ["Viagem com conexão (troca de ônibus no trajeto)"] : []),
+      ...(t.conexao ? ["Viagem COM CONEXÃO (troca de ônibus no trajeto)"] : []),
+      ...(percurso ? [`Percurso até o destino final:\n${percurso}`] : []),
       ...(t.preco !== null ? [`Valor visto no site: ${brl(t.preco)} (sujeito a confirmação)`] : []),
     ];
     const msg = buildWhatsMessage({ origem, destino, dataIda, horario: t.partida, passageiros, tipo: "ida", detalhes });
@@ -107,6 +113,13 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
                       <span className="block font-display font-extrabold text-navy text-lg">{t.partida} <span className="text-slate-400 font-semibold text-sm">→ {t.chegada}</span>
                         {t.conexao && <span className="ml-2 align-middle text-[11px] font-bold bg-accent text-white rounded px-2 py-0.5">COM CONEXÃO</span>}</span>
                       <span className="block text-xs text-slate-500">{t.pontoOrigem} → {t.pontoDestino} · {t.classe} · {t.duracao} · {t.assentos} assentos · {brl(t.preco)}</span>
+                      {t.conexao && (
+                        <span className="block text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded px-2 py-1 mt-1">
+                          {t.trechos.length
+                            ? `Percurso: ${t.trechos.map(s => [s.origem && s.partida ? `${s.origem} (${s.partida})` : s.origem, s.destino && s.chegada ? `${s.destino} (${s.chegada})` : s.destino].filter(Boolean).join(" → ")).join(" → ")}`
+                            : `Com conexão até ${t.destino} — confirme os trechos e horários no WhatsApp`}
+                        </span>
+                      )}
                     </span>
                     <span className="shrink-0 bg-whatsapp text-white rounded-lg px-4 py-2 text-sm font-bold">Selecionar</span>
                   </button>
