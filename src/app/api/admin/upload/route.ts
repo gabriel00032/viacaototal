@@ -33,9 +33,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "JPG inválido." }, { status: 400 });
   if (ext === ".webp" && !(buf.subarray(0, 4).toString() === "RIFF" && buf.subarray(8, 12).toString() === "WEBP"))
     return NextResponse.json({ error: "WEBP inválido." }, { status: 400 });
-  const dir = path.join(process.cwd(), "public", "uploads");
+  const dir = path.join(process.cwd(), "data", "uploads");
   fs.mkdirSync(dir, { recursive: true });
   const name = `${Date.now()}-${crypto.randomBytes(6).toString("hex")}${ext}`;
   fs.writeFileSync(path.join(dir, name), buf);
-  return NextResponse.json({ ok: true, url: `/uploads/${name}` });
+  return NextResponse.json({ ok: true, url: `/api/arquivos/${name}` });
 }

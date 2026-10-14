@@ -87,7 +87,14 @@ export default function AdminEditor({ campo, campos }: { campo: Campo; campos?: 
               <Txt label="Título (parte 2)" value={db.hero.tituloB} onChange={(v: string) => set({ hero: { ...db.hero, tituloB: v } })} />
               <Area label="Subtítulo" value={db.hero.subtitulo} onChange={(v: string) => set({ hero: { ...db.hero, subtitulo: v } })} />
               <Upload label="Imagem de fundo da busca" value={db.hero.fundoUrl} onDone={(url: string) => set({ hero: { ...db.hero, fundoUrl: url } })} />
-              <Txt label="...ou URL da imagem" value={db.hero.fundoUrl} placeholder="https://… ou /uploads/…" onChange={(v: string) => set({ hero: { ...db.hero, fundoUrl: v } })} />
+              <Txt label="...ou URL da imagem" value={db.hero.fundoUrl} placeholder="/api/arquivos/… ou https://…" onChange={(v: string) => set({ hero: { ...db.hero, fundoUrl: v } })} />
+              {db.hero.fundoUrl && !/\.(png|jpe?g|webp|svg)(\?|#|$)/i.test(db.hero.fundoUrl) && (
+                <p className="text-xs text-red-700 bg-red-50 border border-red-200 rounded p-2">Esse endereço não parece ser uma imagem (use o botão de envio acima ou um link direto de imagem). O endereço do site (ex: viajetotal.com.br) não funciona como fundo.</p>
+              )}
+              {db.hero.fundoUrl && /\.(png|jpe?g|webp|svg)(\?|#|$)/i.test(db.hero.fundoUrl) && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={db.hero.fundoUrl} alt="pré-visualização do fundo" className="h-24 w-full object-cover rounded border" />
+              )}
             </>)}
             {c === "marca" && (<>
               <Upload label="Logotipo (troca a logo do cabeçalho e rodapé)" value={db.marca.logoUrl} onDone={(url: string) => set({ marca: { ...db.marca, logoUrl: url } })} />
