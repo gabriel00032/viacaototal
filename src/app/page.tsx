@@ -12,32 +12,25 @@ function locaisOficiais(): string[] {
   } catch { return []; }
 }
 
-const DIFERENCIAIS = [
-  { t: "Custo Benefício", i: "💰" },
-  { t: "Embarque Digital", i: "📱" },
-  { t: "100% Seguro", i: "🛡️" },
-  { t: "Remarcação Fácil", i: "🔄" },
-  { t: "Ônibus Sanitizado", i: "🧼" },
-];
-
 export default function Home() {
   const db = loadDB();
   const locais = locaisOficiais();
   const trips = db.featured.filter(f => f.ativo).sort((a, b) => a.posicao - b.posicao);
   const wa = db.settings.salesWhatsapp || process.env.SALES_WHATSAPP || "";
+  const hero = db.hero, minis = db.minis, difCards = db.difCards, cta = db.cta;
   return (
     <div>
       {/* Hero padrão televendas */}
       <section className="hero-gradient text-white">
         <div className="container-vt pt-10 pb-16">
-          <p className="text-xs font-bold tracking-[0.2em] text-white/70">TELEVENDAS AUTORIZADO · VIAÇÃO TOTAL</p>
+          <p className="text-xs font-bold tracking-[0.2em] text-white/70">{hero.eyebrow}</p>
           <h1 className="font-display text-3xl md:text-5xl font-extrabold mt-2 leading-tight">
-            Sua viagem com a <span className="text-accent">Viação Total</span>, reservada em minutos.
+            {hero.tituloA} <span className="text-accent">{hero.tituloDestaque}</span>{hero.tituloB}
           </h1>
-          <p className="text-white/80 mt-3 max-w-2xl">Escolha a origem, o destino e a data. Atendimento direto pelo WhatsApp, sem pagamento online.</p>
+          <p className="text-white/80 mt-3 max-w-2xl">{hero.subtitulo}</p>
           <div className="mt-6"><SearchForm locais={locais} whatsapp={wa} /></div>
           <div className="flex justify-center gap-6 flex-wrap text-center text-xs mt-6 text-white/90">
-            {DIFERENCIAIS.map(d => <div key={d.t} className="w-24"><div className="text-2xl">{d.i}</div><div className="font-semibold mt-1">{d.t}</div></div>)}
+            {minis.map(d => <div key={d.titulo} className="w-24"><div className="text-2xl">{d.icone}</div><div className="font-semibold mt-1">{d.titulo}</div></div>)}
           </div>
         </div>
       </section>
@@ -58,13 +51,12 @@ export default function Home() {
       <section className="container-vt mt-10">
         <h2 className="font-display text-2xl font-extrabold text-navy text-center">Diferenciais Viação Total</h2>
         <div className="grid md:grid-cols-2 gap-4 mt-6">
-          <div className="card p-6"><h3 className="font-display font-bold text-navy">Conforto e <span className="text-accent">Segurança</span></h3><p className="text-sm text-slate-600 mt-2">Viagens com foco em conforto, segurança e bons profissionais — conforme comunicação institucional oficial.</p></div>
-          <div className="card p-6"><h3 className="font-display font-bold text-navy">Qualidade nos serviços <span className="text-accent">e bons profissionais</span></h3><p className="text-sm text-slate-600 mt-2">Atendimento comercial das 08h às 18h (seg–sex) e SAC 24h: 0800 085 8080.</p></div>
+          {difCards.map(k => <div key={k.titulo} className="card p-6"><h3 className="font-display font-bold text-navy">{k.titulo} <span className="text-accent">{k.destaque}</span></h3><p className="text-sm text-slate-600 mt-2">{k.texto}</p></div>)}
         </div>
       </section>
 
       <section className="container-vt mt-10 grid md:grid-cols-2 gap-4 pb-4">
-        <div className="hero-gradient rounded-2xl p-6 text-white"><h3 className="font-display font-bold text-lg">Atendimento pelo WhatsApp</h3><p className="text-sm text-white/80 mt-1">Você pesquisa, escolhe e fala com um vendedor. Simples assim.</p><Link href="/contato" className="btn-whats mt-4">Compre pelo WhatsApp</Link></div>
+        <div className="hero-gradient rounded-2xl p-6 text-white"><h3 className="font-display font-bold text-lg">{cta.titulo}</h3><p className="text-sm text-white/80 mt-1">{cta.texto}</p><Link href="/contato" className="btn-whats mt-4">Compre pelo WhatsApp</Link></div>
         <div className="card p-6"><h3 className="font-display font-bold text-navy">Informações institucionais</h3><p className="text-sm text-slate-600 mt-1">{db.settings.endereco}. E-mail {db.settings.email}.</p><Link href="/quem-somos" className="underline text-sm mt-3 inline-block text-primary">Quem Somos</Link></div>
       </section>
     </div>

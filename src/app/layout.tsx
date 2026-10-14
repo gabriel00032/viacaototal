@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Viação Total | Televendas — Passagens de ônibus",
   description: "Orçamento de passagens da Viação Total. Escolha origem, destino e data e fale direto no WhatsApp.",

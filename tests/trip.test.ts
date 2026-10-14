@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "../src/lib/trip";
 import { candidatosOficiais, shapeTrips, brl, pontoDe, filtrarLocais, extrairTrechos, curto, linhaPercurso } from "../src/lib/schedules";
+import { loadDB } from "../src/lib/store";
 
 describe("pesquisa de viagens", () => {
   it("aceita origem/destino/data válidos", () => {
@@ -108,12 +109,22 @@ describe("pesquisa de viagens", () => {
     ]);
     expect(linha).toBe("Rondonopolis (11:05) → Campo Grande (19:15) → Sao Paulo (12:35)");
   });
-  it("marca partidas de hoje já ocorridas como 'partiu' em vez de ocultar", () => {
-    const hoje = new Date().toISOString().slice(0, 10);
+  it("marca partidas de hoje já ocorridas como 'partiu' em vez de ocultar", () => {    const hoje = new Date().toISOString().slice(0, 10);
     const raw = { trips: [
       { departureDateTime: `${hoje}T00:01:00`, arrivalDateTime: `${hoje}T12:00:00`, duration: { hours: 11, minutes: 59 }, classOfServiceName: "EXECUTIVO", availableSeats: 1, price: 100, departureLocationName: "A", arrivalLocationName: "B" },
     ]};
     const [t] = shapeTrips(raw, hoje);
     expect(t.partiu).toBe(true);
+  });
+  it("banco possui todas as seções editáveis pelo admin", () => {
+    const db = loadDB();
+    expect(db.hero.tituloDestaque).toBeTruthy();
+    expect(db.minis.length).toBeGreaterThan(0);
+    expect(db.difCards.length).toBeGreaterThan(0);
+    expect(db.cta.titulo).toBeTruthy();
+    expect(db.pontos.length).toBeGreaterThan(0);
+    expect(db.quemSomos.texto).toBeTruthy();
+    expect(db.faqs.length).toBeGreaterThan(0);
+    expect(Array.isArray(db.schedules)).toBe(true);
   });
 });
