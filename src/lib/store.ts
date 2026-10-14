@@ -25,6 +25,7 @@ export interface Faq { q: string; a: string; }
 export interface Marca { nomeA: string; nomeB: string; subtitulo: string; logoUrl: string; }
 export interface Rodape { sobre: string; notaEsquerda: string; notaDireita: string; }
 export interface TelaLogin { titulo: string; subtitulo: string; dica: string; fundoUrl: string; }
+export interface AdminCreds { user: string; passHash: string; updatedAt: string; }
 export interface DB {
   featured: FeaturedTrip[]; destinations: Destination[];
   schedules: Schedule[]; settings: Settings; clicks: { rota: string; total: number }[];
@@ -32,6 +33,7 @@ export interface DB {
   marca: Marca;
   rodape: Rodape;
   telaLogin: TelaLogin;
+  adminCreds?: AdminCreds;
   minis: MiniDif[];
   difCards: DifCard[];
   cta: { titulo: string; texto: string };
