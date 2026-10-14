@@ -2,6 +2,8 @@ import { describe, it, expect } from "vitest";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "../src/lib/trip";
 import { candidatosOficiais, shapeTrips, brl, pontoDe, filtrarLocais, extrairTrechos, curto, linhaPercurso, hojeLocal, logoEmpresa } from "../src/lib/schedules";
 import { loadDB } from "../src/lib/store";
+import fs from "fs";
+import path from "path";
 
 describe("pesquisa de viagens", () => {
   it("aceita origem/destino/data válidos", () => {
@@ -151,5 +153,16 @@ describe("pesquisa de viagens", () => {
     expect(db.quemSomos.texto).toBeTruthy();
     expect(db.faqs.length).toBeGreaterThan(0);
     expect(Array.isArray(db.schedules)).toBe(true);
+  });
+  it("PWA instalável: manifest, ícones e service worker presentes", () => {
+    const pub = path.join(process.cwd(), "public");
+    const man = JSON.parse(fs.readFileSync(path.join(pub, "manifest.webmanifest"), "utf-8"));
+    expect(man.display).toBe("standalone");
+    expect(man.start_url).toBe("/");
+    for (const ic of man.icons) {
+      expect(fs.existsSync(path.join(pub, ic.src.replace(/^\//, "")))).toBe(true);
+    }
+    expect(fs.existsSync(path.join(pub, "sw.js"))).toBe(true);
+    expect(fs.existsSync(path.join(pub, "icons", "apple-touch-icon.png"))).toBe(true);
   });
 });

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "vitest run"
+    "test": "vitest run",
+    "icons": "node scripts/gen-icons.cjs"
   },
   "dependencies": {
     "next": "14.2.5",

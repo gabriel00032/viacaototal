@@ -1,5 +1,6 @@
 import SearchForm from "@/components/SearchForm";
 import FeaturedCards from "@/components/FeaturedCards";
+import { InstallApp } from "@/components/Pwa";
 import Link from "next/link";
 import fs from "fs";
 import path from "path";
@@ -36,6 +37,7 @@ export default function Home() {
           </h1>
           <p className="text-white/80 mt-3 max-w-2xl">{hero.subtitulo}</p>
           <div className="mt-6"><SearchForm locais={locais} whatsapp={wa} /></div>
+          <InstallApp />
           <div className="flex justify-center gap-6 flex-wrap text-center text-xs mt-6 text-white/90">
             {minis.map(d => <div key={d.titulo} className="w-24"><div className="text-2xl">{d.icone}</div><div className="font-semibold mt-1">{d.titulo}</div></div>)}
           </div>
