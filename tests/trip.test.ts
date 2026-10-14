@@ -119,6 +119,9 @@ describe("pesquisa de viagens", () => {
   it("banco possui todas as seções editáveis pelo admin", () => {
     const db = loadDB();
     expect(db.hero.tituloDestaque).toBeTruthy();
+    expect(db.hero.fundoUrl).toBeDefined();
+    expect(db.marca.nomeB).toBeTruthy();
+    expect(db.rodape.sobre).toBeDefined();
     expect(db.minis.length).toBeGreaterThan(0);
     expect(db.difCards.length).toBeGreaterThan(0);
     expect(db.cta.titulo).toBeTruthy();

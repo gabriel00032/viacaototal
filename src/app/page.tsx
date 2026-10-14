@@ -21,8 +21,15 @@ export default function Home() {
   return (
     <div>
       {/* Hero padrão televendas */}
-      <section className="hero-gradient text-white">
-        <div className="container-vt pt-10 pb-16">
+      <section className="hero-gradient text-white relative overflow-hidden">
+        {hero.fundoUrl ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={hero.fundoUrl} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-navy/70" />
+          </>
+        ) : null}
+        <div className="container-vt pt-10 pb-16 relative">
           <p className="text-xs font-bold tracking-[0.2em] text-white/70">{hero.eyebrow}</p>
           <h1 className="font-display text-3xl md:text-5xl font-extrabold mt-2 leading-tight">
             {hero.tituloA} <span className="text-accent">{hero.tituloDestaque}</span>{hero.tituloB}

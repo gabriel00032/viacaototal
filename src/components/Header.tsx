@@ -2,6 +2,8 @@
 import Link from "next/link";
 import { useState } from "react";
 
+export interface MarcaProps { nomeA: string; nomeB: string; subtitulo: string; logoUrl: string; }
+
 const links = [
   { href: "/passagens", label: "Passagens" },
   { href: "/destinos", label: "Destinos" },
@@ -12,14 +14,26 @@ const links = [
   { href: "/contato", label: "Contato" },
 ];
 
-export default function Header() {
+export function MarcaBloco({ marca, claro = false, logoClass = "h-10 w-auto" }: { marca: MarcaProps; claro?: boolean; logoClass?: string }) {
+  if (marca.logoUrl) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={marca.logoUrl} alt={`${marca.nomeA} ${marca.nomeB}`} className={logoClass} />;
+  }
+  return (
+    <span className="leading-tight">
+      <span className={`font-display text-xl font-extrabold ${claro ? "text-white" : "text-navy"}`}>{marca.nomeA} <span className="text-accent">{marca.nomeB}</span></span>
+      {marca.subtitulo ? <span className={`block text-xs ${claro ? "text-white/70" : "text-slate-500"}`}>{marca.subtitulo}</span> : null}
+    </span>
+  );
+}
+
+export default function Header({ marca }: { marca: MarcaProps }) {
   const [open, setOpen] = useState(false);
   return (
     <header className="bg-white border-b sticky top-0 z-50">
       <div className="container-vt flex items-center justify-between py-3 gap-3">
         <Link href="/" className="leading-tight" aria-label="Viação Total - Início">
-          <p className="font-display text-xl font-extrabold text-navy">VIAÇÃO <span className="text-accent">TOTAL</span></p>
-          <p className="text-xs text-slate-500">Televendas autorizado Viação Total</p>
+          <MarcaBloco marca={marca} />
         </Link>
         <nav className="hidden lg:flex items-center gap-5 text-sm font-medium text-navy">
           {links.map(l => <Link key={l.href} href={l.href} className="hover:text-primary">{l.label}</Link>)}

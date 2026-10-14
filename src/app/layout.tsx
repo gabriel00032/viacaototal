@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { loadDB } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,8 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  let marca = { nomeA: "VIAÇÃO", nomeB: "TOTAL", subtitulo: "Televendas autorizado Viação Total", logoUrl: "" };
+  try { marca = loadDB().marca; } catch { /* padrão */ }
   return (
     <html lang="pt-BR">
       <head>
@@ -20,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body>
-        <Header />
+        <Header marca={marca} />
         <main className="min-h-[60vh]">{children}</main>
         <Footer />
       </body>

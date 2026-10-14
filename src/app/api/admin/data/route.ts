@@ -65,8 +65,18 @@ export async function PUT(req: Request) {
       tituloDestaque: str(body.hero.tituloDestaque, 120),
       tituloB: str(body.hero.tituloB, 120),
       subtitulo: str(body.hero.subtitulo, 300),
+      fundoUrl: str(body.hero.fundoUrl, 500),
     };
   }
+  if (body.marca) {
+    db.marca = {
+      nomeA: str(body.marca.nomeA, 40) || "VIAÇÃO",
+      nomeB: str(body.marca.nomeB, 40) || "TOTAL",
+      subtitulo: str(body.marca.subtitulo, 120),
+      logoUrl: str(body.marca.logoUrl, 500),
+    };
+  }
+  if (body.rodape) db.rodape = { sobre: str(body.rodape.sobre, 500) };
   if (Array.isArray(body.minis)) {
     db.minis = body.minis.slice(0, 12).map((m: any) => ({ icone: str(m.icone, 8), titulo: str(m.titulo, 60) })).filter((m: any) => m.titulo);
   }

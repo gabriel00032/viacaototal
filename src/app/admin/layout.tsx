@@ -8,6 +8,8 @@ const items = [
   { href: "/admin/destinos", label: "Destinos" },
   { href: "/admin/horarios", label: "Horários" },
   { href: "/admin/pontos", label: "Pontos de venda" },
+  { href: "/admin/marca", label: "Marca e logo" },
+  { href: "/admin/rodape", label: "Rodapé" },
   { href: "/admin/conteudo", label: "Conteúdo do site" },
   { href: "/admin/faq", label: "Dúvidas frequentes" },
   { href: "/admin/configuracoes", label: "Configurações" },

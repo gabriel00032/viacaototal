@@ -22,10 +22,14 @@ export interface MiniDif { icone: string; titulo: string; }
 export interface DifCard { titulo: string; destaque: string; texto: string; }
 export interface Ponto { nome: string; endereco: string; horario: string; telefone: string; mapa: string; }
 export interface Faq { q: string; a: string; }
+export interface Marca { nomeA: string; nomeB: string; subtitulo: string; logoUrl: string; }
+export interface Rodape { sobre: string; }
 export interface DB {
   featured: FeaturedTrip[]; destinations: Destination[];
   schedules: Schedule[]; settings: Settings; clicks: { rota: string; total: number }[];
-  hero: { eyebrow: string; tituloA: string; tituloDestaque: string; tituloB: string; subtitulo: string };
+  hero: { eyebrow: string; tituloA: string; tituloDestaque: string; tituloB: string; subtitulo: string; fundoUrl: string };
+  marca: Marca;
+  rodape: Rodape;
   minis: MiniDif[];
   difCards: DifCard[];
   cta: { titulo: string; texto: string };
@@ -36,14 +40,17 @@ export interface DB {
 
 const file = path.join(process.cwd(), "data", "db.json");
 
-const DEFAULTS: Pick<DB, "hero" | "minis" | "difCards" | "cta" | "pontos" | "quemSomos" | "faqs"> = {
+const DEFAULTS: Pick<DB, "hero" | "minis" | "difCards" | "cta" | "pontos" | "quemSomos" | "faqs" | "marca" | "rodape"> = {
   hero: {
     eyebrow: "TELEVENDAS AUTORIZADO · VIAÇÃO TOTAL",
     tituloA: "Sua viagem com a",
     tituloDestaque: "Viação Total",
     tituloB: ", reservada em minutos.",
     subtitulo: "Escolha a origem, o destino e a data. Atendimento direto pelo WhatsApp, sem pagamento online.",
+    fundoUrl: "",
   },
+  marca: { nomeA: "VIAÇÃO", nomeB: "TOTAL", subtitulo: "Televendas autorizado Viação Total", logoUrl: "" },
+  rodape: { sobre: "Canal de consulta de viagens com atendimento direto pelo WhatsApp." },
   minis: [
     { icone: "💰", titulo: "Custo Benefício" },
     { icone: "📱", titulo: "Embarque Digital" },
@@ -71,7 +78,13 @@ const DEFAULTS: Pick<DB, "hero" | "minis" | "difCards" | "cta" | "pontos" | "que
 
 export function loadDB(): DB {
   const raw = fs.readFileSync(file, "utf-8").replace(/^\uFEFF/, "");
-  return { ...DEFAULTS, ...(JSON.parse(raw) as Partial<DB>) } as DB;
+  const parsed = JSON.parse(raw) as Partial<DB>;
+  const merged: any = { ...DEFAULTS, ...parsed };
+  // Mescla nível 1 dos blocos para arquivos antigos ganharem campos novos
+  for (const k of ["hero", "marca", "rodape", "cta", "quemSomos", "settings"] as const) {
+    merged[k] = { ...(DEFAULTS as any)[k], ...((parsed as any)[k] || {}) };
+  }
+  return merged as DB;
 }
 
 export function saveDB(db: DB) {

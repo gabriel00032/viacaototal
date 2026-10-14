@@ -1,10 +1,20 @@
 {
   "hero": {
-    "eyebrow": "TELEVENDAS AUTORIZADO · VIAÇÃO TOTAL",
+    "eyebrow": "AGENCIA RONDONÓPOLIS - MT",
     "tituloA": "Sua viagem com a",
     "tituloDestaque": "Viação Total",
     "tituloB": ", reservada em minutos.",
-    "subtitulo": "Escolha a origem, o destino e a data. Atendimento direto pelo WhatsApp, sem pagamento online."
+    "subtitulo": "Escolha a origem, o destino e a data. Atendimento direto pelo WhatsApp, sem pagamento online.",
+    "fundoUrl": ""
+  },
+  "marca": {
+    "nomeA": "VIAÇÃO",
+    "nomeB": "TOTAL",
+    "subtitulo": "Televendas autorizado Viação Total",
+    "logoUrl": ""
+  },
+  "rodape": {
+    "sobre": "Canal de consulta de viagens com atendimento direto pelo WhatsApp."
   },
   "minis": [
     {
@@ -46,11 +56,11 @@
   },
   "pontos": [
     {
-      "nome": "Matriz — Bayeux/PB (endereço institucional, confirmar se é guichê)",
-      "endereco": "Rua Santa Clara, Nº 1007, Sala 01, Mário Andreazza, Bayeux - PB, CEP 58.309-614",
-      "horario": "A confirmar",
-      "telefone": "SAC 0800 085 8080",
-      "mapa": "https://www.google.com/maps/search/?api=1&query=Rua+Santa+Clara+1007+Bayeux+PB"
+      "nome": "GUICHÊ RONDONÓPOLIS -MT",
+      "endereco": "R. Trinta e Um de Dezembro - Jardim Belo Horizonte, Rondonópolis - MT, 78705-490",
+      "horario": "08:00 até às 22:40",
+      "telefone": "48992006998",
+      "mapa": "https://maps.app.goo.gl/GDKUCCuLsfhCGrJo9"
     }
   ],
   "quemSomos": {
@@ -63,23 +73,43 @@
     },
     {
       "q": "Horários de guichês?",
-      "a": "Variam por ponto de venda. Consulte a página Horários ou fale com o comercial — não publicamos horários não confirmados."
-    },
-    {
-      "q": "Transporte de animais?",
-      "a": "Siga as regras oficiais da empresa e da ANTT. Confirme condições com a equipe comercial antes da viagem."
-    },
-    {
-      "q": "Remarcação e reembolso?",
-      "a": "Conforme regras da tarifa e legislação. Solicite pelo canal oficial; não garantimos condições sem confirmação."
+      "a": "Atendimento de Segunda à Domingo\n\nDe Segunda a Sexta das 08:00 até às 22:40\n\nSábado, Domingo e Feriados\n08:00 - 11:30 e das 14:00 até às 22:40"
     },
     {
       "q": "Aluguel de ônibus?",
-      "a": "Solicite proposta pelo WhatsApp comercial informando data, trecho e número de passageiros."
+      "a": "Solicite proposta pelo WhatsApp comercial informando data, trecho e número de passageiros.Siga as regras oficiais da empresa e da ANTT. Confirme condições com a equipe comercial antes da viagem."
+    },
+    {
+      "q": "ANIMAL DE ESTIMAÇÃO",
+      "a": "É permitido o transporte de animais nos ônibus, desde que observados os locais e os limites máximos de peso e dimensões estipulados para a bagagem no Decreto nº 2.521/98, bem como às disposições legais relativas ao transporte de animais e o devido acondicionamento estabelecido pela empresa transportadora (inciso V e VII, art. 30 do Decreto nº 2.521/98).\n\nFica a cargo de cada empresa transportadora definir se realiza o transporte ou não, assim como, regras específicas, como por exemplo, dimensões da caixa de transporte e limite de peso do animal.\n\nDica: Ao identificar a empresa de ônibus que irá realizar sua viagem, obtenha as orientações da transportadora sobre o transporte de animais."
+    },
+    {
+      "q": "Quais as regras para alteração de passagem?",
+      "a": "Se você comprou sua passagem pela Voyon e precisa alterar algum dado, é possível fazer isso, seguindo as regras da “RESOLUÇÃO Nº 5.974, DE 21 DE MARÇO DE 2022.”\n\nArt. 3°, VII - Remarcar o bilhete adquirido observado o prazo de 1 (um) ano de validade do bilhete a contar da data da primeira emissão;\nArt. 3°, IX - transferir o bilhete adquirido, exceto nos casos de Bilhete de Viagem do Idoso, de Bilhete de Viagem do Jovem, de bilhete com desconto para idoso e jovem carente e se o contrato de transporte dispuser de outra maneira, observado o prazo de 1 (um) ano de validade do bilhete a contar da data da primeira emissão;\nPara demais dúvidas, entrar em contato com um de nossos atendentes."
+    },
+    {
+      "q": "Quais as regras para cancelamento de passagem?",
+      "a": "Para cancelar seu bilhete, é necessário seguir algumas definições básicas, como mostra a RESOLUÇÃO Nº 5.974, DE 21 DE MARÇO DE 2022.\n\nArt. 3°, X - Receber a importância paga no caso de desistência da viagem, desde que com antecedência mínima de 6 (seis) horas em relação ao horário de partida constante do bilhete, facultado à transportadora o desconto de 5% (cinco porcento) do valor da tarifa.\nPara demais dúvidas, entrar em contato com um de nossos atendentes."
+    },
+    {
+      "q": "Embarque de adultos, quais documentos são aceitos para embarque?",
+      "a": "Documentos Físicos:\n\nRG (Registo Geral)\nCNH (Carteira Nacional de Habilitação)\nPassaporte\nRNE (Registo Nacional de Estrangeiro)\nCarteira de trabalho\nCarteira profissional\nDocumentos Digitais:\n\nCNH-E (Carteira Nacional de Habilitação Eletrônica)\nDNI (Documento Nacional de Identificação)\nCaso você tenha perdido o documento, pode embarcar usando o boletim de ocorrência, desde que tenha sido emitido a menos de 30 dias (exigência da Agência Nacional de Transporte Terrestre - ANTT)."
+    },
+    {
+      "q": "Como funciona o embarque de crianças e adolescentes?",
+      "a": "Crianças com até 05 anos - Não pagam passagem se viajarem no colo. Os pais ou responsáveis devem apresentar a certidão de nascimento da criança ou outro documento de fé pública para realizar a emissão de bilhete gratuidade e no dia da viagem, portar o documento original no momento do embarque na empresa de ônibus. Se os pais ou responsáveis decidirem ocupar uma poltrona para maior conforto e segurança da criança, será cobrado o valor normal de uma passagem.\n\nCrianças e Adolescentes de 06 até 15 anos - De 06 até 15 anos é obrigatório a compra do bilhete no valor integral.\n\nOs mesmos podem viajar acompanhados por parentes de até 3º grau (mãe, pai, bisavós, avós, tios, irmãos ou sobrinhos maiores de 18 anos). É necessário comprovar o parentesco por documentação. O embarque é feito com apresentação da certidão de nascimento (somente para crianças com até 11 anos de idade).\nLembrando que para maiores de 12 anos é obrigatório estar com o documento de identificação (RG original). O embarque sem esse documento original não será permitido.\nCaso viaje desacompanhado ou sem ter esse grau de parentesco, é necessária autorização dos pais ou responsáveis para viagem nacional, essa autorização deve ter firma reconhecida em cartório."
+    },
+    {
+      "q": "Como despachar bagagem gratuitamente?",
+      "a": "Todas as empresas de transportes de passageiros, conforme legislação (RESOLUÇÃO Nº5.974, DE 21 DE MARÇO DE 2022), devem assegurar somente o transporte de BAGAGEM PESSOAL DE VIAGEM (malas, mochilas, bolsas) e de forma gratuita, nas seguintes condições:\n\nBagagem no Bagageiro - O passageiro tem direito a despachar bagagem de até 30 kg de peso máximo, dimensões máximas de 1m em qualquer sentido, sendo até dois volumes por passageiro. Caso exceda, será cobrado excesso de bagagem pessoal no momento do embarque, a depender da disponibilidade do bagageiro.\n\nBagagem de Mão - O limite de peso para as bagagens de mão é de 5kg no total (mochilas e malas pequenas). Malas de rodinha, independente do tamanho, serão transportadas no bagageiro por motivos de segurança. As bagagens de mão devem caber no porta-embrulho, sem comprometer o conforto e a segurança dos demais passageiros."
+    },
+    {
+      "q": "Como funciona a cobrança de bagagem extra?",
+      "a": "Se alguma bagagem ultrapassar os 30 kg, o passageiro poderá ser cobrado por quilo extra em até 0,5% do preço da passagem do respectivo serviço.\n\nImportante saber, que as empresas transportadoras de passageiros não despacham alimentos perecíveis, eletrodomésticos, eletroeletrônicos, motocicletas e itens frágeis sem embalagem adequada e que coloque outros passageiros em risco, como líquidos, gases de qualquer espécie, inflamáveis, explosivos, armas de fogo, produtos corrosivos ou tóxicos.\n\nCaso tenha intenção de levar algum tipo de carga, produtos ou mercadorias, a recomendação é que seja utilizado o serviço específico para este fim, através das transportadoras de cargas e encomendas."
     }
   ],
   "settings": {
-    "salesWhatsapp": "5511992414101",
+    "salesWhatsapp": "5548992006998",
     "sac": "0800 085 8080",
     "email": "sac@viajetotal.com.br",
     "atendimento": "SAC 24h | Comercial 08h às 18h, segunda a sexta",
@@ -250,5 +280,10 @@
     }
   ],
   "schedules": [],
-  "clicks": []
+  "clicks": [
+    {
+      "rota": "RONDONOPOLIS - MT ( TERMINAL RODOVIARIO ) → CAMPO GRANDE - MS ( TERMINAL RODOVIARIO ) 22:40",
+      "total": 1
+    }
+  ]
 }

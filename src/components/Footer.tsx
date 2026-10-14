@@ -1,18 +1,20 @@
 import Link from "next/link";
 import { loadDB } from "@/lib/store";
+import { MarcaBloco } from "@/components/Header";
 
 export default function Footer() {
-  let s;
-  try { s = loadDB().settings; } catch {
-    s = { endereco: "Rua Santa Clara, Nº 1007, Sala 01, Mário Andreazza, Bayeux - PB, CEP 58.309-614", sac: "0800 085 8080", email: "sac@viajetotal.com.br", atendimento: "SAC 24h | Comercial 08h às 18h, segunda a sexta" };
+  let db;
+  try { db = loadDB(); } catch {
+    db = { marca: { nomeA: "VIAÇÃO", nomeB: "TOTAL", subtitulo: "Televendas autorizado Viação Total", logoUrl: "" }, rodape: { sobre: "" }, settings: { endereco: "Rua Santa Clara, Nº 1007, Sala 01, Mário Andreazza, Bayeux - PB, CEP 58.309-614", sac: "0800 085 8080", email: "sac@viajetotal.com.br", atendimento: "SAC 24h | Comercial 08h às 18h, segunda a sexta", salesWhatsapp: "" } } as any;
   }
+  const s = db.settings;
   const wa = (s as any).salesWhatsapp as string | undefined;
   return (
     <footer className="bg-navy text-white mt-12">
       <div className="container-vt py-10 grid gap-8 md:grid-cols-4 text-sm">
         <div>
-          <p className="font-display text-lg font-extrabold">VIAÇÃO <span className="text-accent">TOTAL</span></p>
-          <p className="mt-1 text-white/70 text-xs">Televendas autorizado Viação Total</p>
+          <MarcaBloco marca={db.marca} claro logoClass="h-10 w-auto" />
+          {db.rodape?.sobre ? <p className="mt-3 text-white/70 text-xs">{db.rodape.sobre}</p> : null}
           <p className="mt-3 text-white/80">{s.endereco}.</p>
           {wa
             ? <a className="btn-whats !py-2 !px-4 text-sm mt-4" target="_blank" href={`https://wa.me/${wa.replace(/\D/g, "")}`}>WhatsApp comercial</a>

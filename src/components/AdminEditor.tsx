@@ -1,14 +1,42 @@
 "use client";
 import { useEffect, useState } from "react";
 
-export type Campo = "featured" | "destinations" | "schedules" | "settings" | "hero" | "minis" | "difcards" | "cta" | "pontos" | "quemsomos" | "faqs";
+export type Campo = "featured" | "destinations" | "schedules" | "settings" | "hero" | "minis" | "difcards" | "cta" | "pontos" | "quemsomos" | "faqs" | "marca" | "rodape";
 
 const TITULOS: Record<Campo, string> = {
   featured: "Passagens mais buscadas", destinations: "Destinos (curadoria)", schedules: "Horários cadastrados",
   settings: "Configurações e WhatsApp", hero: "Topo da página inicial", minis: "Diferenciais (faixa de ícones)",
   difcards: "Diferenciais (cartões)", cta: "Chamada para WhatsApp", pontos: "Pontos de venda",
-  quemsomos: "Quem Somos", faqs: "Dúvidas frequentes",
+  quemsomos: "Quem Somos", faqs: "Dúvidas frequentes", marca: "Marca e logo", rodape: "Rodapé",
 };
+
+function Upload({ label, value, onDone }: { label: string; value: string; onDone: (url: string) => void }) {
+  const [st, setSt] = useState("");
+  async function send(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    setSt("Enviando…");
+    const form = new FormData();
+    form.append("file", f);
+    const r = await fetch("/api/admin/upload", { method: "POST", body: form });
+    const j = await r.json().catch(() => ({}));
+    if (r.ok && j.url) { onDone(j.url); setSt("Enviado!"); }
+    else setSt(j.error || "Falha no envio.");
+  }
+  return (
+    <div className="border rounded-lg p-3 bg-slate-50 text-sm">
+      <p className="label">{label} (PNG/JPG/WEBP/SVG, até 2 MB)</p>
+      <div className="flex items-center gap-3 mt-2 flex-wrap">
+        <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" onChange={send} className="text-sm" />
+        {value ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={value} alt="pré-visualização" className="h-12 w-auto rounded border bg-white" />
+        ) : null}
+        <span className="text-xs text-slate-500">{st}</span>
+      </div>
+    </div>
+  );
+}
 
 function Txt({ label, value, onChange, placeholder }: any) {
   return (
@@ -58,6 +86,28 @@ export default function AdminEditor({ campo, campos }: { campo: Campo; campos?: 
               <Txt label="Título (destaque laranja)" value={db.hero.tituloDestaque} onChange={(v: string) => set({ hero: { ...db.hero, tituloDestaque: v } })} />
               <Txt label="Título (parte 2)" value={db.hero.tituloB} onChange={(v: string) => set({ hero: { ...db.hero, tituloB: v } })} />
               <Area label="Subtítulo" value={db.hero.subtitulo} onChange={(v: string) => set({ hero: { ...db.hero, subtitulo: v } })} />
+              <Upload label="Imagem de fundo da busca" value={db.hero.fundoUrl} onDone={(url: string) => set({ hero: { ...db.hero, fundoUrl: url } })} />
+              <Txt label="...ou URL da imagem" value={db.hero.fundoUrl} placeholder="https://… ou /uploads/…" onChange={(v: string) => set({ hero: { ...db.hero, fundoUrl: v } })} />
+            </>)}
+            {c === "marca" && (<>
+              <Upload label="Logotipo (troca a logo do cabeçalho e rodapé)" value={db.marca.logoUrl} onDone={(url: string) => set({ marca: { ...db.marca, logoUrl: url } })} />
+              <Txt label="...ou URL do logotipo" value={db.marca.logoUrl} placeholder="https://… ou /uploads/…" onChange={(v: string) => set({ marca: { ...db.marca, logoUrl: v } })} />
+              <div className="grid sm:grid-cols-2 gap-3">
+                <Txt label="Nome (parte 1)" value={db.marca.nomeA} onChange={(v: string) => set({ marca: { ...db.marca, nomeA: v } })} />
+                <Txt label="Nome (parte 2, laranja)" value={db.marca.nomeB} onChange={(v: string) => set({ marca: { ...db.marca, nomeB: v } })} />
+              </div>
+              <Txt label="Linha abaixo do nome" value={db.marca.subtitulo} onChange={(v: string) => set({ marca: { ...db.marca, subtitulo: v } })} />
+              <p className="text-xs text-slate-500">Sem imagem, o site exibe o nome em texto. Com imagem, ela aparece no cabeçalho e no rodapé.</p>
+            </>)}
+            {c === "rodape" && (<>
+              <Area label="Texto institucional do rodapé" value={db.rodape.sobre} rows={3} onChange={(v: string) => set({ rodape: { sobre: v } })} />
+              <Txt label="Endereço" value={db.settings.endereco} onChange={(v: string) => set({ settings: { ...db.settings, endereco: v } })} />
+              <div className="grid sm:grid-cols-3 gap-3">
+                <Txt label="SAC" value={db.settings.sac} onChange={(v: string) => set({ settings: { ...db.settings, sac: v } })} />
+                <Txt label="E-mail" value={db.settings.email} onChange={(v: string) => set({ settings: { ...db.settings, email: v } })} />
+                <Txt label="WhatsApp comercial" value={db.settings.salesWhatsapp} onChange={(v: string) => set({ settings: { ...db.settings, salesWhatsapp: v } })} />
+              </div>
+              <Txt label="Horário de atendimento" value={db.settings.atendimento} onChange={(v: string) => set({ settings: { ...db.settings, atendimento: v } })} />
             </>)}
             {c === "cta" && (<>
               <Txt label="Título da chamada" value={db.cta.titulo} onChange={(v: string) => set({ cta: { ...db.cta, titulo: v } })} />
