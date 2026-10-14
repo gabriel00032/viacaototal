@@ -28,7 +28,7 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
     if (errs.length) { resetTrips(); return; }
     setLoading(true); setTripsError(""); setLink(null);
     try {
-      const r = await fetch(`/api/horarios?origem=${encodeURIComponent(origem)}&destino=${encodeURIComponent(destino)}&data=${dataIda}`);
+      const r = await fetch(`/api/horarios?origem=${encodeURIComponent(origem)}&destino=${encodeURIComponent(destino)}&data=${dataIda}&pax=${passageiros}`);
       const j = await r.json();
       setTrips(j.trips || []);
       if (!j.ok && !(j.trips || []).length) setTripsError(j.error || "Não foi possível consultar os horários.");
@@ -42,6 +42,7 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
       `Horário: ${t.partida} (chegada prevista ${t.chegada}, ${t.classe})`,
       `Embarque: ${t.origem}`,
       `Desembarque: ${t.destino}`,
+      ...(t.conexao ? ["Viagem com conexão (troca de ônibus no trajeto)"] : []),
       ...(t.preco !== null ? [`Valor visto no site: ${brl(t.preco)} (sujeito a confirmação)`] : []),
     ];
     const msg = buildWhatsMessage({ origem, destino, dataIda, horario: t.partida, passageiros, tipo: "ida", detalhes });
@@ -103,7 +104,8 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
                   <button key={`${t.partida}-${t.origem}-${t.classe}-${t.preco}`} onClick={() => escolherHorario(t)}
                     className="w-full flex items-center justify-between gap-3 border border-slate-200 rounded-xl px-4 py-3 hover:border-whatsapp hover:shadow text-left transition">
                     <span>
-                      <span className="block font-display font-extrabold text-navy text-lg">{t.partida} <span className="text-slate-400 font-semibold text-sm">→ {t.chegada}</span></span>
+                      <span className="block font-display font-extrabold text-navy text-lg">{t.partida} <span className="text-slate-400 font-semibold text-sm">→ {t.chegada}</span>
+                        {t.conexao && <span className="ml-2 align-middle text-[11px] font-bold bg-accent text-white rounded px-2 py-0.5">COM CONEXÃO</span>}</span>
                       <span className="block text-xs text-slate-500">{t.pontoOrigem} → {t.pontoDestino} · {t.classe} · {t.duracao} · {t.assentos} assentos · {brl(t.preco)}</span>
                     </span>
                     <span className="shrink-0 bg-whatsapp text-white rounded-lg px-4 py-2 text-sm font-bold">Selecionar</span>

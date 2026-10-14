@@ -85,6 +85,11 @@ NORMAL (padrão), BILHETE DE VIAGEM IDOSO 100% e demais regras da empresa.
   WhatsApp com origem, destino, data, horário, chegada e valor visto (sempre com
   pedido de confirmação comercial). Sem resultados ou falha → mensagem honesta +
   botão genérico de consulta. Nada é exibido sem vir da API.
+- Contrato fiel ao site oficial (capturado via instrumentação da busca real):
+  `searchType: 2`, `passengers: [{idPassengerClassification: 1, quantity: N}]`
+  (com `null` a API devolve menos viagens ou nenhuma — ex.: Cuiabá→Campo Grande
+  com nomes formatados: `null` → 0, array → 2), `seats` = nº de passageiros.
+  Viagens com `isConnection: true` exibem selo "COM CONEXÃO" e linha na mensagem.
 - Token: `VIAJETOTAL_API_TOKEN` (`.env.local`, fora do git) — token público do
   site oficial, só leitura, expira ~10/2027. Renovação: abrir viajetotal.com.br
   e copiar `access_token` de `localStorage AuthService_TOKEN_INFO_KEY`.

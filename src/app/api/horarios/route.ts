@@ -25,13 +25,16 @@ function resolver(valor: string, oficiais: Set<string>): string[] {
   return candidatosOficiais(valor).slice(0, 2);
 }
 
-// GET /api/horarios?origem=&destino=&data=YYYY-MM-DD
+// GET /api/horarios?origem=&destino=&data=YYYY-MM-DD&pax=1
 // Retorna horários REAIS da API oficial. Sem fallback inventado.
+// O corpo replica o contrato do site oficial (passengers é obrigatório:
+// com null a API retorna menos viagens ou nenhuma).
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const origem = url.searchParams.get("origem") || "";
   const destino = url.searchParams.get("destino") || "";
   const data = url.searchParams.get("data") || ""; // YYYY-MM-DD
+  const pax = Math.min(10, Math.max(1, Number(url.searchParams.get("pax")) || 1));
   const token = process.env.VIAJETOTAL_API_TOKEN || "";
   const oficiais = nomesOficiais();
 
@@ -54,10 +57,11 @@ export async function GET(req: Request) {
           headers: { ...HEADERS, Authorization: `Bearer ${token}` },
           body: JSON.stringify({
             departureLocationName: d, arrivalLocationName: a, isReturn: false,
-            departureDate: `${data}T12:00:00`, promoCode: null, seats: 1,
+            departureDate: `${data}T12:00:00`, promoCode: null, seats: pax,
             idBookingCouponRevalidation: null, returnDate: null,
             searchType: 2, discountType: null, isOpen: false,
-            idPassengerType: 1, passengers: null,
+            idPassengerType: 1,
+            passengers: [{ idPassengerClassification: 1, quantity: pax }],
           }),
           signal: ctrl.signal,
         });

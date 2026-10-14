@@ -13,6 +13,7 @@ export interface TripOption {
   destino: string;
   pontoOrigem: string;  // rótulo curto do ponto (ex: "Terminal Rodoviário", "Coxipó")
   pontoDestino: string;
+  conexao: boolean;  // true quando a API indica trecho com conexão/troca de ônibus
 }
 
 // Candidatos oficiais (nomes exatos da API) por cidade simplificada.
@@ -75,6 +76,7 @@ export function shapeTrips(raw: any, dataISO: string): TripOption[] {
       destino: t.arrivalLocationName || "",
       pontoOrigem: pontoDe(t.departureLocationName || ""),
       pontoDestino: pontoDe(t.arrivalLocationName || ""),
+      conexao: Boolean(t.isConnection),
     };
     list.push(out);
   }
