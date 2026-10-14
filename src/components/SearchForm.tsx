@@ -120,8 +120,14 @@ export default function SearchForm({ locais, whatsapp }: { locais: string[]; wha
                         <span className={`block font-display font-extrabold text-lg ${t.partiu ? "text-slate-400" : "text-navy"}`}>{t.partida} <span className="text-slate-400 font-semibold text-sm">→ {t.chegada}{t.diasDepois > 0 && ` +${t.diasDepois} dia${t.diasDepois > 1 ? "s" : ""}`}</span>
                           {t.conexao && <span className="ml-2 align-middle text-[11px] font-bold bg-accent text-white rounded px-2 py-0.5">COM CONEXÃO</span>}
                           {t.partiu && <span className="ml-2 align-middle text-[11px] font-bold bg-slate-300 text-slate-600 rounded px-2 py-0.5">JÁ PARTIU</span>}</span>
-                        <span className="block text-xs text-slate-500">{t.pontoOrigem} → {t.pontoDestino} · {t.classe} · {t.duracao}{t.empresa ? ` · ${t.empresa}` : ""}</span>
-                        <span className="block text-xs text-slate-500 font-semibold">{brl(t.preco)} · {t.assentos} assentos{t.plataforma ? ` · Plataforma ${t.plataforma}` : ""}</span>
+                        <span className="block text-xs text-slate-500">{t.pontoOrigem} → {t.pontoDestino} · {t.classe} · {t.duracao}{t.empresa && !t.logoEmpresa ? ` · ${t.empresa}` : ""}</span>
+                        <span className="flex items-center gap-2 text-xs text-slate-500 font-semibold">
+                          {t.logoEmpresa ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={t.logoEmpresa} alt={t.empresa || "Empresa"} title={t.empresa || ""} className="h-6 w-auto rounded bg-white px-1 border border-slate-200" />
+                          ) : null}
+                          <span>{brl(t.preco)} · {t.assentos} assentos{t.plataforma ? ` · Plataforma ${t.plataforma}` : ""}</span>
+                        </span>
                         {t.conexao && (
                           <span className="block text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded px-2 py-1 mt-1">
                             {t.trechos.length

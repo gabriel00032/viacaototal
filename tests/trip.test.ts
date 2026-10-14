@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { validateSearch, validateEncomenda, buildWhatsMessage, buildEncomendaMessage, whatsappLink } from "../src/lib/trip";
-import { candidatosOficiais, shapeTrips, brl, pontoDe, filtrarLocais, extrairTrechos, curto, linhaPercurso, hojeLocal } from "../src/lib/schedules";
+import { candidatosOficiais, shapeTrips, brl, pontoDe, filtrarLocais, extrairTrechos, curto, linhaPercurso, hojeLocal, logoEmpresa } from "../src/lib/schedules";
 import { loadDB } from "../src/lib/store";
 
 describe("pesquisa de viagens", () => {
@@ -129,8 +129,13 @@ describe("pesquisa de viagens", () => {
     const [t] = shapeTrips(raw, iso.slice(0, 10));
     expect(t.partiu).toBe(false);
   });
-  it("banco possui todas as seções editáveis pelo admin", () => {
-    const db = loadDB();
+  it("associa o logotipo oficial de cada empresa", () => {
+    expect(logoEmpresa("VIACAO TOTAL")).toBe("/empresas/total.svg");
+    expect(logoEmpresa("VIACAO MOTTA")).toBe("/empresas/motta.png");
+    expect(logoEmpresa("EMPRESA X")).toBeNull();
+    expect(logoEmpresa(null)).toBeNull();
+  });
+  it("banco possui todas as seções editáveis pelo admin", () => {    const db = loadDB();
     expect(db.hero.tituloDestaque).toBeTruthy();
     expect(db.hero.fundoUrl).toBeDefined();
     expect(db.marca.nomeB).toBeTruthy();

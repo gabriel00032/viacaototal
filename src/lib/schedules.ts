@@ -25,6 +25,7 @@ export interface TripOption {
   trechos: Trecho[]; // percurso trecho a trecho até o destino final (quando informado)
   plataforma: string | null; // ex: "03 à 06" (boardingPlatform da API)
   empresa: string | null;    // ex: "VIACAO TOTAL" (companyName da API)
+  logoEmpresa: string | null; // caminho do logotipo oficial da empresa
   diasDepois: number;        // 0 = chega no mesmo dia; 1+ = chega dia(s) depois
   partiu: boolean;           // true quando a partida já ocorreu (exibida desabilitada)
 }
@@ -89,6 +90,18 @@ export function horaDe(v: any): string | null {
 
 function fmtHora(iso: string): string {
   return horaDe(iso) || "--:--";
+}
+
+// Logotipos oficiais das empresas (arquivos locais, mesma identidade dos sites).
+const LOGO_EMPRESA: Record<string, string> = {
+  "VIACAO TOTAL": "/empresas/total.svg",
+  "VIACAO MOTTA": "/empresas/motta.png",
+};
+
+export function logoEmpresa(nome: string | null): string | null {
+  if (!nome) return null;
+  const key = norm(nome).replace(/[^A-Z ]/g, "").replace(/\s+/g, " ").trim();
+  return LOGO_EMPRESA[key] || null;
 }
 
 // Nome curto (cidade) para o percurso: "RONDONOPOLIS - MT ( TERMINAL RODOVIARIO )"
@@ -172,6 +185,7 @@ export function shapeTrips(raw: any, dataISO: string): TripOption[] {
       trechos: extrairTrechos(t),
       plataforma: typeof t.boardingPlatform === "string" && t.boardingPlatform.trim() ? t.boardingPlatform.trim() : null,
       empresa: typeof t.companyName === "string" && t.companyName.trim() ? t.companyName.trim() : null,
+      logoEmpresa: logoEmpresa(typeof t.companyName === "string" ? t.companyName : null),
       diasDepois: Number(t.departureArrivalDiffDays ?? 0) || 0,
       partiu: false,
     };
