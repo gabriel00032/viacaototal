@@ -15,7 +15,8 @@ Next.js 14 (App Router) served by `next dev` from a bind-mounted checkout; no se
   bind mount — admin edits persist on the host checkout and show up in `git status`.
 - Image/schedule lookups are external HTTP calls (`/api/horarios`, `/api/poltronas`) that need the optional
   `VIAJETOTAL_API_TOKEN` / `VIAJETOTAL_API_TOKEN_MOTTA` secrets; without them the API answers 503 and the site
-  degrades to its empty state. `prisma/schema.prisma` is documentation for a future PostgreSQL migration only and is
+  degrades to its empty state. In the sandbox both tokens are supplied through the platform secrets file and the
+  search returns live trips (verified: Cuiabá → Campo Grande). `prisma/schema.prisma` is documentation for a future PostgreSQL migration only and is
   not used by the app.
 - Admin panel at `/admin`: credentials come from `data/db.json` (`adminCreds`) and fall back to
   `ADMIN_USER` + `ADMIN_PASS_HASH`, defaulting to `admin` / `admin123`.
