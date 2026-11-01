@@ -1,0 +1,17 @@
+{
+  "previewPort": 3000,
+  "healthPath": "/",
+  "startCommand": "docker compose -f docker-compose.base44.yml up -d",
+  "secrets": [
+    {
+      "name": "VIAJETOTAL_API_TOKEN",
+      "description": "Token público de leitura do site oficial viajetotal.com.br (localStorage AuthService_TOKEN_INFO_KEY). Necessário apenas para a busca de horários/poltronas; o site funciona sem ele e a busca responde 503.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "VIAJETOTAL_API_TOKEN_MOTTA",
+      "description": "Token público de leitura do site www.motta.com.br, usado para mesclar viagens operadas pela Motta. Opcional, mesma função do token anterior.",
+      "requiredAtBoot": false
+    }
+  ]
+}
